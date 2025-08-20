@@ -35,46 +35,46 @@ export default function Navbar() {
                 Browse
               </NavigationMenuTrigger>
               <NavigationMenuContent className="md:w-[980px]">
-                <div className="grid gap-8 rounded-lg border border-white/10 bg-neutral-900/95 p-6 text-sm text-neutral-300 shadow-xl md:grid-cols-4">
+                <div className="grid gap-8 rounded-lg border border-white/10 bg-neutral-900 p-6 text-sm text-neutral-300 shadow-xl md:grid-cols-4">
                   <div className="col-span-1 pr-6 md:border-r md:border-white/10">
                     <div className="flex flex-col gap-4">
-                      <a href="#" className="block underline-offset-8 decoration-red-600 hover:text-white hover:underline">Popular</a>
-                      <a href="#" className="block underline-offset-8 decoration-red-600 hover:text-white hover:underline">New</a>
-                      <a href="#" className="block underline-offset-8 decoration-red-600 hover:text-white hover:underline">Alphabetical</a>
-                      <a href="#" className="block underline-offset-8 decoration-red-600 hover:text-white hover:underline">Simulcast Season</a>
-                      <a href="#" className="block underline-offset-8 decoration-red-600 hover:text-white hover:underline">Movies</a>
-                      <a href="#" className="block underline-offset-8 decoration-red-600 hover:text-white hover:underline">Studio</a>
+                      <a href="#" className="block hover:text-white">Popular</a>
+                      <a href="#" className="block hover:text-white">New</a>
+                      <a href="#" className="block hover:text-white">Alphabetical</a>
+                      <a href="#" className="block hover:text-white">Simulcast Season</a>
+                      <a href="#" className="block hover:text-white">Movies</a>
+                      <a href="#" className="block hover:text-white">Studio</a>
                     </div>
                   </div>
                   <div className="col-span-3 grid grid-cols-3 gap-8">
                     <div>
                       <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">Explore</div>
                       <div className="flex flex-col gap-3">
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Action</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Adult Cast</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Adventure</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Comedy</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Drama</a>
+                        <a href="#" className="hover:text-white">Action</a>
+                        <a href="#" className="hover:text-white">Adult Cast</a>
+                        <a href="#" className="hover:text-white">Adventure</a>
+                        <a href="#" className="hover:text-white">Comedy</a>
+                        <a href="#" className="hover:text-white">Drama</a>
                       </div>
                     </div>
                     <div>
                       <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">&nbsp;</div>
                       <div className="flex flex-col gap-3">
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Fantasy</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Gore</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Harem</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Horror</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Isekai</a>
+                        <a href="#" className="hover:text-white">Fantasy</a>
+                        <a href="#" className="hover:text-white">Gore</a>
+                        <a href="#" className="hover:text-white">Harem</a>
+                        <a href="#" className="hover:text-white">Horror</a>
+                        <a href="#" className="hover:text-white">Isekai</a>
                       </div>
                     </div>
                     <div>
                       <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">&nbsp;</div>
                       <div className="flex flex-col gap-3">
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Romance</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Supernatural</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">School</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Video Game</a>
-                        <a href="#" className="underline-offset-8 decoration-red-600 hover:text-white hover:underline">Time Travel</a>
+                        <a href="#" className="hover:text-white">Romance</a>
+                        <a href="#" className="hover:text-white">Supernatural</a>
+                        <a href="#" className="hover:text-white">School</a>
+                        <a href="#" className="hover:text-white">Video Game</a>
+                        <a href="#" className="hover:text-white">Time Travel</a>
                       </div>
                     </div>
                   </div>
@@ -115,7 +115,7 @@ export default function Navbar() {
             onClick={() => setMobileOpen(false)}
           />
           {/* drawer */}
-          <div className="absolute left-0 top-0 h-full w-72 border-r border-white/10 bg-neutral-900/95 p-4 text-sm text-neutral-200 shadow-xl">
+          <div className="absolute left-0 top-0 h-full w-72 border-r border-white/10 bg-neutral-900 p-4 text-sm text-neutral-200 shadow-xl">
             <div className="mb-4 text-xs font-semibold uppercase tracking-wider text-neutral-400">Browse</div>
             <div className="mb-5 flex flex-col gap-2">
               <a href="#" className="rounded px-2 py-2 hover:bg-white/5">Popular</a>
