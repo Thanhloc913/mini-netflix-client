@@ -6,6 +6,11 @@ import LoginPage from "@/pages/public/Login";
 import RegisterPage from "./pages/public/Register";
 import ProfilePage from "./pages/private/Profile";
 import AuthLayout from "./layout/AuthLayout";
+import AdminLayout from "./layout/AdminLayout";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AccountManagement from "./pages/admin/AccountManagement";
+import ProfileManagement from "./pages/admin/ProfileManagement";
+import CreateAccount from "./pages/admin/CreateAccount";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 import { AuthProvider } from "./providers/AuthProvider";
 
@@ -64,6 +69,61 @@ export default function AppRouter() {
               <MainLayout>
                 <ProfilePage />
               </MainLayout>
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Admin Routes */}
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/accounts" 
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout>
+                <AccountManagement />
+              </AdminLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/accounts/create" 
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout>
+                <CreateAccount />
+              </AdminLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/profiles" 
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout>
+                <ProfileManagement />
+              </AdminLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/movies" 
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold text-white">Quản lý phim</h1>
+                  <p className="text-gray-400 mt-2">Tính năng đang phát triển...</p>
+                </div>
+              </AdminLayout>
             </ProtectedRoute>
           } 
         />

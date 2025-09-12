@@ -118,7 +118,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
@@ -148,7 +148,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Avatar Section */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-800 rounded-xl p-6">
+            <div className="bg-neutral-900 rounded-xl p-6">
               <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
                 <User className="h-5 w-5 mr-2" />
                 Ảnh đại diện
@@ -222,7 +222,7 @@ export default function ProfilePage() {
 
           {/* Profile Info */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-800 rounded-xl p-6">
+            <div className="bg-neutral-900 rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-white">Thông tin cá nhân</h2>
                 {!isEditing ? (
@@ -251,7 +251,7 @@ export default function ProfilePage() {
               </div>
 
               <form onSubmit={profileForm.handleSubmit(handleUpdateProfile)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6">
                   <div>
                     <label className="block text-white text-sm font-medium mb-2">Tên hiển thị</label>
                     <Input
@@ -263,15 +263,6 @@ export default function ProfilePage() {
                       <p className="text-red-400 text-sm mt-1">{profileForm.formState.errors.name.message}</p>
                     )}
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-white text-sm font-medium mb-2">Vai trò</label>
-                  <Input
-                    value={user.account.role === "ADMIN" ? "Quản trị viên" : "Người dùng"}
-                    disabled
-                    className="bg-gray-700 border-gray-600 text-white opacity-50"
-                  />
                 </div>
 
                 {isEditing && (
@@ -294,7 +285,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Change Password */}
-            <div className="bg-gray-800 rounded-xl p-6 mt-6">
+            <div className="bg-neutral-900 rounded-xl p-6 mt-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-white flex items-center">
                   <Lock className="h-5 w-5 mr-2" />

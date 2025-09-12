@@ -160,9 +160,11 @@ export default function Navbar() {
                 {isAdmin && (
                   <>
                     <DropdownMenuSeparator className="bg-neutral-700" />
-                    <DropdownMenuItem className="text-neutral-300 hover:text-white hover:bg-neutral-800">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Quản trị
+                    <DropdownMenuItem asChild className="text-neutral-300 hover:text-white hover:bg-neutral-800">
+                      <Link to="/admin" className="flex items-center">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Quản trị hệ thống
+                      </Link>
                     </DropdownMenuItem>
                   </>
                 )}
