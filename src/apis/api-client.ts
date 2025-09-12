@@ -1,10 +1,10 @@
 import axios from "axios";
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from "axios";
 import { useAuthStore } from "@/store/auth";
-import { refreshToken } from "@/services/auth";
+import { refreshToken } from "@/apis/auth";
 import type { TokenPair } from "@/types/auth";
 
-const BASE_URL = "http://localhost:3000/auth";
+const BASE_URL = "http://localhost:3000";
 
 let isRefreshing = false;
 let refreshPromise: Promise<TokenPair> | null = null;

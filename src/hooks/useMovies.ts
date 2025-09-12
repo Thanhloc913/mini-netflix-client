@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { moviesApi } from "@/apis/movies";
-import type { Movie, MovieCategory } from "@/mock/movies";
+import type { Movie, MovieCategory } from "@/types/movie";
 
 export function useMovies() {
   const [featuredMovies, setFeaturedMovies] = useState<Movie[]>([]);
@@ -31,16 +31,31 @@ export function useMovies() {
     fetchMovies();
   }, []);
 
+  const refetch = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const [featured, categories] = await Promise.all([
+        moviesApi.getFeaturedMovies(),
+        moviesApi.getMovieCategories()
+      ]);
+      
+      setFeaturedMovies(featured);
+      setMovieCategories(categories);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch movies");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     featuredMovies,
     movieCategories,
     loading,
     error,
-    refetch: () => {
-      setLoading(true);
-      setError(null);
-      // Re-run the effect
-    }
+    refetch
   };
 }
 

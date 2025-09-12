@@ -1,5 +1,5 @@
 import { MovieCard } from "@/components/MovieCard";
-import type { Movie } from "@/mock/movies";
+import type { Movie } from "@/types/movie";
 
 interface MovieRowProps {
   title: string;

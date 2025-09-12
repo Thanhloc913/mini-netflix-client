@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { getAccounts, getProfiles } from "@/services/auth";
+import { getAccounts, getProfiles } from "@/apis/auth";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Users, UserCheck, Film, TrendingUp, Eye, Plus } from "lucide-react";
 

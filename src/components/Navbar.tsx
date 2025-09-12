@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { SearchBar } from "./SearchBar";
-import type { Movie } from "@/mock/movies";
+import type { Movie } from "@/types/movie";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);

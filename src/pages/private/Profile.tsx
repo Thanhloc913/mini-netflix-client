@@ -5,7 +5,7 @@ import { UpdateProfileSchema, ChangePasswordSchema, type UpdateProfileRequest, t
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
-import { updateProfile, changePassword, deleteAccount } from "@/services/auth";
+import { updateProfile, changePassword, deleteAccount } from "@/apis/auth";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { User, Camera, Lock, Trash2, Save, X } from "lucide-react";
 
@@ -153,16 +153,16 @@ export default function ProfilePage() {
                 <User className="h-5 w-5 mr-2" />
                 Ảnh đại diện
               </h2>
-              
+
               <div className="text-center">
                 <div className="relative inline-block">
                   <div className="w-32 h-32 rounded-full bg-red-600 flex items-center justify-center text-white text-4xl font-bold overflow-hidden mx-auto mb-4 border-4 border-gray-600">
                     {avatarPreview ? (
                       <img src={avatarPreview} alt="Preview" className="w-full h-full object-cover" />
                     ) : user.profile.avatarUrl ? (
-                      <img 
-                        src={user.profile.avatarUrl} 
-                        alt={user.profile.name} 
+                      <img
+                        src={user.profile.avatarUrl}
+                        alt={user.profile.name}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           // Fallback nếu avatar không load được
@@ -178,7 +178,7 @@ export default function ProfilePage() {
                       user.profile.name?.charAt(0).toUpperCase() || "U"
                     )}
                   </div>
-                  
+
                   {isEditing && (
                     <button
                       type="button"
@@ -190,7 +190,7 @@ export default function ProfilePage() {
                     </button>
                   )}
                 </div>
-                
+
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -198,7 +198,7 @@ export default function ProfilePage() {
                   onChange={handleAvatarChange}
                   className="hidden"
                 />
-                
+
                 <p className="text-gray-400 text-sm">
                   {isEditing ? (
                     <>
@@ -210,7 +210,7 @@ export default function ProfilePage() {
                     "Ảnh đại diện"
                   )}
                 </p>
-                
+
                 {avatar && (
                   <p className="text-orange-400 text-xs mt-2">
                     Ảnh mới: {avatar.name}
@@ -377,7 +377,7 @@ export default function ProfilePage() {
               <p className="text-gray-300 mb-4">
                 Hành động này không thể hoàn tác. Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn.
               </p>
-              
+
               {!showDeleteConfirm ? (
                 <Button
                   onClick={() => setShowDeleteConfirm(true)}

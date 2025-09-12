@@ -1,7 +1,7 @@
 import { useMovies } from "@/hooks/useMovies";
 import { HeroSection } from "@/components/HeroSection";
 import { MovieRow } from "@/components/MovieRow";
-import type { Movie } from "@/mock/movies";
+import type { Movie } from "@/types/movie";
 
 export default function Home() {
     const { featuredMovies, movieCategories, loading, error } = useMovies();
@@ -41,10 +41,8 @@ export default function Home() {
 
     return (
         <div className="min-h-screen">
-            {/* Hero Section */}
-            {featuredMovies.length > 0 && (
-                <HeroSection movies={featuredMovies} onPlay={handleMoviePlay} />
-            )}
+            {/* Hero Section - Always show if we have movies */}
+            <HeroSection movies={featuredMovies} onPlay={handleMoviePlay} />
 
             {/* Gradient Transition */}
             <div className="h-32 bg-gradient-to-b from-black via-gray-800 to-gray-900"></div>
@@ -61,15 +59,21 @@ export default function Home() {
                     </p>
                 </div>
 
-                {movieCategories.map((category) => (
-                    <div key={category.id} className="mb-10">
-                        <MovieRow
-                            title={category.name}
-                            movies={category.movies}
-                            onMoviePlay={handleMoviePlay}
-                        />
+                {movieCategories.length > 0 ? (
+                    movieCategories.map((category) => (
+                        <div key={category.id} className="mb-10">
+                            <MovieRow
+                                title={category.name}
+                                movies={category.movies}
+                                onMoviePlay={handleMoviePlay}
+                            />
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center py-12">
+                        <div className="text-gray-400 text-lg">Đang tải phim...</div>
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );

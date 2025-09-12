@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import type { Movie } from "@/mock/movies";
+import type { Movie } from "@/types/movie";
+import { Play, Plus, Calendar, Clock, Star } from "lucide-react";
 
 interface HeroSectionProps {
   movies: Movie[];
@@ -23,79 +24,92 @@ export function HeroSection({ movies, onPlay }: HeroSectionProps) {
 
   if (!currentMovie) return null;
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).getFullYear();
+  };
+
+  const formatDuration = (minutes: number | null) => {
+    if (!minutes) return null;
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  };
+
   return (
     <div className="relative h-[80vh] overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${currentMovie.backdropUrl})` }}
+        style={{ 
+          backgroundImage: `url(${currentMovie.posterUrl || "https://via.placeholder.com/1920x1080?text=No+Image"})` 
+        }}
       />
       
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-black/40" />
       
       {/* Content */}
       <div className="relative z-10 flex items-center h-full px-8 md:px-16">
-        <div className="max-w-3xl">
-          {/* Genre tags */}
+        <div className="max-w-4xl">
+          {/* Type and Genre tags */}
           <div className="flex gap-2 mb-4">
-            {currentMovie.genres.slice(0, 3).map((genre) => (
+            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+              currentMovie.isSeries ? "bg-blue-600 text-white" : "bg-purple-600 text-white"
+            }`}>
+              {currentMovie.isSeries ? "Phim bộ" : "Phim lẻ"}
+            </span>
+            {currentMovie.genres && currentMovie.genres.slice(0, 2).map((genre: any, index: number) => (
               <span
-                key={genre}
-                className="bg-orange-600/80 text-white px-3 py-1 rounded text-sm font-medium"
+                key={index}
+                className="bg-gray-700/80 text-white px-3 py-1 rounded-full text-sm font-medium"
               >
-                {genre}
+                {genre.name || genre}
               </span>
             ))}
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight">
             {currentMovie.title}
           </h1>
           
-          {/* Episode and season info */}
-          <div className="flex items-center gap-4 mb-4">
-            {currentMovie.season && (
-              <span className="text-orange-400 text-lg font-semibold">{currentMovie.season}</span>
+          {/* Movie info */}
+          <div className="flex items-center gap-6 mb-6 text-lg">
+            <div className="flex items-center gap-2 text-yellow-400">
+              <Star className="h-5 w-5 fill-current" />
+              <span className="font-semibold">{currentMovie.rating}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <Calendar className="h-5 w-5" />
+              <span>{formatDate(currentMovie.releaseDate)}</span>
+            </div>
+            {currentMovie.duration && (
+              <div className="flex items-center gap-2 text-gray-300">
+                <Clock className="h-5 w-5" />
+                <span>{formatDuration(currentMovie.duration)}</span>
+              </div>
             )}
-            {currentMovie.episode && (
-              <span className="text-white text-lg">{currentMovie.episode}</span>
-            )}
-            <span className="text-yellow-400 text-lg">★ {currentMovie.rating}</span>
-            <span className="text-gray-300">{currentMovie.year}</span>
           </div>
           
-          {/* Status */}
-          {currentMovie.status && (
-            <div className="mb-4">
-              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                currentMovie.status === "Đang phát hành" 
-                  ? "bg-green-600 text-white" 
-                  : "bg-blue-600 text-white"
-              }`}>
-                {currentMovie.status}
-              </span>
-            </div>
-          )}
-          
-          <p className="text-gray-200 text-lg mb-8 line-clamp-3 leading-relaxed">
+          <p className="text-gray-200 text-lg mb-8 line-clamp-3 leading-relaxed max-w-3xl">
             {currentMovie.description}
           </p>
           
           <div className="flex gap-4">
             <Button
               size="lg"
-              className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 text-lg font-semibold"
+              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg font-semibold flex items-center gap-3"
               onClick={() => onPlay?.(currentMovie)}
             >
-              ▶ START WATCHING E1
+              <Play className="h-6 w-6 fill-current" />
+              Xem ngay
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-black px-6 py-3 text-lg font-semibold"
+              className="border-2 border-white text-white hover:bg-white hover:text-black px-6 py-3 text-lg font-semibold flex items-center gap-3"
             >
-              📋 Thêm vào danh sách
+              <Plus className="h-6 w-6" />
+              Danh sách của tôi
             </Button>
           </div>
         </div>

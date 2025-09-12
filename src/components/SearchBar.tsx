@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useMovieSearch } from "@/hooks/useMovies";
 import { MovieCard } from "./MovieCard";
-import type { Movie } from "@/mock/movies";
+import type { Movie } from "@/types/movie";
 
 interface SearchBarProps {
   onMoviePlay?: (movie: Movie) => void;
