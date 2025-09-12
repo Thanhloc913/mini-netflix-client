@@ -1,25 +1,40 @@
-import { apiClient } from "@/apis/api-client";
-import type { loginType } from "@/schemas/auth.schema";
-import type { registerRequest } from "@/schemas/auth.schema";
-import type { TokenPair } from "@/types/auth";
-import type { registerResponse } from "@/types/auth";
+import * as authService from "@/services/auth";
+import type { LoginRequest, RegisterRequest } from "@/schemas/auth.schema";
+import type { TokenPair, RegisterResponse } from "@/types/auth";
 
-export async function loginApi(payload: loginType) {
-  const { data } = await apiClient.post<TokenPair>("/auth/login", payload);
-  return data;
+// Re-export for backward compatibility and cleaner imports
+export const loginApi = authService.login;
+export const registerApi = authService.register;
+export const refreshTokenApi = authService.refreshToken;
+
+// Convenience functions
+export async function loginUser(credentials: LoginRequest): Promise<TokenPair> {
+  return authService.login(credentials);
 }
 
-export async function refreshApi(refreshToken: string) {
-  const { data } = await apiClient.post<TokenPair>("/auth/refresh", { refreshToken });
-  return data;
+export async function registerUser(
+  userData: RegisterRequest, 
+  avatar?: File
+): Promise<RegisterResponse> {
+  return authService.register(userData, avatar);
 }
 
-export async function logoutApi() {
-  const { data } = await apiClient.post<{ success: true }>("/auth/logout");
-  return data;
+export async function refreshUserToken(refreshToken: string): Promise<TokenPair> {
+  return authService.refreshToken(refreshToken);
 }
 
-export async function registerApi(payload: registerRequest) {
-  const { data } = await apiClient.post<registerResponse>("/users", payload);
-  return data;
-}
+// Account management
+export const getAccounts = authService.getAccounts;
+export const getAccountById = authService.getAccountById;
+export const updateAccount = authService.updateAccount;
+export const deleteAccount = authService.deleteAccount;
+
+// Profile management
+export const getProfiles = authService.getProfiles;
+export const getProfileById = authService.getProfileById;
+export const getProfileByAccountId = authService.getProfileByAccountId;
+export const updateProfile = authService.updateProfile;
+export const deleteProfile = authService.deleteProfile;
+
+// Current user
+export const getCurrentUser = authService.getCurrentUser;

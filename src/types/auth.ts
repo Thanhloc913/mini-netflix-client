@@ -1,14 +1,32 @@
 export type TokenPair = {
-    accessToken: string;
-    refreshToken: string
+  access_token: string;
+  refresh_token: string;
 };
 
-export type registerResponse = {
-    userId: string;
-    username: string;
-    email: string;
-    passwordHash: string;
-    avatarURL: string;
-    createdAt: string;
-    deletedAt: string;
+export type Account = {
+  id: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type Profile = {
+  id: string;
+  accountId: string;
+  name: string;
+  avatarUrl?: string;
+};
+
+export type RegisterResponse = {
+  id: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  name: string;
+  avatarUrl?: string;
+};
+
+export type AuthUser = {
+  account: Account;
+  profile: Profile;
 };

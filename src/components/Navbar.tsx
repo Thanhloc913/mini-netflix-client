@@ -1,14 +1,22 @@
-// src/components/layout/Navbar.tsx
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuTrigger, NavigationMenuContent } from "@/components/ui/navigation-menu";
-import { Avatar } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, User, Settings, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { Link } from "react-router-dom";
+import { SearchBar } from "./SearchBar";
+import type { Movie } from "@/mock/movies";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandExplore, setExpandExplore] = useState(true);
+  const { user, logout, isAdmin } = useAuth();
+
+  const handleMoviePlay = (movie: Movie) => {
+    console.log("Playing movie:", movie.title);
+    alert(`Đang phát: ${movie.title}`);
+  };
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-neutral-900 shadow-[0_2px_10px_rgba(0,0,0,.4)]">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 text-neutral-100 sm:px-6 lg:px-8">
@@ -26,7 +34,7 @@ export default function Navbar() {
           </Button>
           <div className="text-xl font-bold tracking-wide md:text-2xl">
             My<span className="text-red-600">Netflix</span>
-          </div>    
+          </div>
 
           {/* Navigation Menu */}
           <NavigationMenu className="hidden items-center gap-6 md:flex list-none">
@@ -92,17 +100,104 @@ export default function Navbar() {
 
         {/* Right side: Search / Avatar */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="h-8 px-3 text-sm text-neutral-300 hover:bg-white/10 hover:text-white">Search</Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Avatar className="h-8 w-8" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <SearchBar onMoviePlay={handleMoviePlay} />
+
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 rounded-full hover:bg-white/10 p-1 transition-colors focus:outline-none focus:ring-2 focus:ring-red-600/50">
+                  <div className="h-8 w-8 rounded-full bg-red-600 flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
+                    {user.profile.avatarUrl ? (
+                      <img
+                        src={user.profile.avatarUrl}
+                        alt={user.profile.name}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          // Fallback nếu avatar không load được
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : null}
+                    <span className={`${user.profile.avatarUrl ? 'hidden' : 'flex'} items-center justify-center h-full w-full`}>
+                      {user.profile.name?.charAt(0).toUpperCase() || "U"}
+                    </span>
+                  </div>
+                  <span className="hidden md:inline text-sm text-neutral-300">
+                    {user.profile.name || "User"}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-56 bg-neutral-900 rounded-xl shadow-xl overflow-hidden dropdown-content"
+                sideOffset={5}
+                avoidCollisions={true}
+                collisionPadding={16}
+                side="bottom"
+              >
+                <div className="px-3 py-2 border-b border-neutral-700">
+                  <p className="text-sm font-medium text-white">{user.profile.name}</p>
+                  <p className="text-xs text-neutral-400">{user.account.email}</p>
+                  {isAdmin && (
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-red-600 text-white text-xs rounded-full">
+                      Admin
+                    </span>
+                  )}
+                </div>
+
+                <DropdownMenuItem asChild className="text-neutral-300 hover:text-white hover:bg-neutral-800">
+                  <Link to="/profile" className="flex items-center">
+                    <User className="h-4 w-4 mr-2" />
+                    Hồ sơ cá nhân
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className="text-neutral-300 hover:text-white hover:bg-neutral-800">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Cài đặt
+                </DropdownMenuItem>
+
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator className="bg-neutral-700" />
+                    <DropdownMenuItem className="text-neutral-300 hover:text-white hover:bg-neutral-800">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Quản trị
+                    </DropdownMenuItem>
+                  </>
+                )}
+
+                <DropdownMenuSeparator className="bg-neutral-700" />
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Đăng xuất
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link to="/login">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-3 text-sm text-neutral-300 hover:bg-white/10 hover:text-white"
+                >
+                  Đăng nhập
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button
+                  size="sm"
+                  className="h-8 px-3 text-sm bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Đăng ký
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
@@ -137,9 +232,9 @@ export default function Navbar() {
             {expandExplore && (
               <div className="mt-2 grid grid-cols-2 gap-2 px-2">
                 {[
-                  "Action","Adult Cast","Adventure","Comedy","Drama",
-                  "Fantasy","Gore","Harem","Horror","Isekai",
-                  "Romance","Supernatural","School","Video Game","Time Travel",
+                  "Action", "Adult Cast", "Adventure", "Comedy", "Drama",
+                  "Fantasy", "Gore", "Harem", "Horror", "Isekai",
+                  "Romance", "Supernatural", "School", "Video Game", "Time Travel",
                 ].map((g) => (
                   <a key={g} href="#" className="rounded px-2 py-1 hover:bg-white/5">{g}</a>
                 ))}

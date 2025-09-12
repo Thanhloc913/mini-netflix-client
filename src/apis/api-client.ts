@@ -1,10 +1,10 @@
 import axios from "axios";
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from "axios";
 import { useAuthStore } from "@/store/auth";
+import { refreshToken } from "@/services/auth";
+import type { TokenPair } from "@/types/auth";
 
-const BASE_URL = "http://localhost:3000";
-
-type TokenPair = { accessToken: string; refreshToken: string };
+const BASE_URL = "http://localhost:3000/auth";
 
 let isRefreshing = false;
 let refreshPromise: Promise<TokenPair> | null = null;
@@ -19,7 +19,6 @@ function createClient(): AxiosInstance {
   instance.interceptors.request.use((config) => {
     const { accessToken } = useAuthStore.getState();
     if (accessToken && !config.headers?.Authorization) {
-      // mutate headers safely without fighting AxiosHeaders typing
       const headers = (config.headers ?? {}) as Record<string, string>;
       headers["Authorization"] = `Bearer ${accessToken}`;
       config.headers = headers as unknown as AxiosRequestHeaders;
@@ -38,10 +37,9 @@ function createClient(): AxiosInstance {
 
         try {
           const tokens = await getOrRefreshTokens();
-          // Update header and retry
           originalRequest.headers = {
             ...(originalRequest.headers || {}),
-            Authorization: `Bearer ${tokens.accessToken}`,
+            Authorization: `Bearer ${tokens.access_token}`,
           };
           return instance(originalRequest);
         } catch {
@@ -62,11 +60,9 @@ function createClient(): AxiosInstance {
 }
 
 async function getOrRefreshTokens(): Promise<TokenPair> {
-  const { refreshToken, setTokens } = useAuthStore.getState();
+  const { refreshToken: currentRefreshToken, setTokens } = useAuthStore.getState();
 
-  // If we had an access token but it's invalid, refresh using refreshToken
-  if (!refreshToken) {
-    // No refresh token; cannot refresh
+  if (!currentRefreshToken) {
     throw new Error("Missing refresh token");
   }
 
@@ -74,18 +70,15 @@ async function getOrRefreshTokens(): Promise<TokenPair> {
     isRefreshing = true;
     refreshPromise = (async () => {
       try {
-        const res = await axios.post<TokenPair>(`${BASE_URL}/auth/refresh`, { refreshToken }, {
-          headers: { "Content-Type": "application/json" },
-        });
-        setTokens(res.data);
-        return res.data;
+        const tokens = await refreshToken(currentRefreshToken);
+        setTokens(tokens);
+        return tokens;
       } finally {
         isRefreshing = false;
       }
     })();
   }
 
-  // Wait for the in-flight refresh
   const tokens = await refreshPromise!;
   return tokens;
 }

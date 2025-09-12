@@ -25,3 +25,47 @@
     -webkit-line-clamp: 3;
   }
 }
+
+/* Fix dropdown menu và các vấn đề layout */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  #root {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  /* Fix dropdown menu focus ring */
+  [data-radix-popper-content-wrapper] {
+    z-index: 50 !important;
+  }
+  
+  /* Fix dropdown menu positioning */
+  [data-radix-dropdown-menu-content] {
+    max-width: calc(100vw - 16px) !important;
+  }
+  
+  /* Ẩn scrollbar cho tất cả elements */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Fix white line issues */
+  .dropdown-content {
+    border: none !important;
+    outline: none !important;
+  }
+}

@@ -52,6 +52,7 @@ export function useMovieSearch(query: string) {
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
+      setLoading(false);
       return;
     }
 
@@ -62,13 +63,15 @@ export function useMovieSearch(query: string) {
         const searchResults = await moviesApi.searchMovies(query);
         setResults(searchResults);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Search failed");
+        setError(err instanceof Error ? err.message : "Tìm kiếm thất bại");
+        setResults([]);
       } finally {
         setLoading(false);
       }
     };
 
-    const debounceTimer = setTimeout(searchMovies, 300);
+    // Debounce search với 500ms
+    const debounceTimer = setTimeout(searchMovies, 500);
     return () => clearTimeout(debounceTimer);
   }, [query]);
 
