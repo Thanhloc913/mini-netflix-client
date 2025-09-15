@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { getAccounts, getProfiles } from "@/apis/auth";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { Users, UserCheck, Film, TrendingUp, Eye, Plus } from "lucide-react";
+import { Users, UserCheck, Film, TrendingUp, Eye, Plus, Upload } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -97,6 +97,13 @@ export default function AdminDashboard() {
       icon: UserCheck,
       href: "/admin/profiles",
       color: "bg-purple-600 hover:bg-purple-700"
+    },
+    {
+      title: "Upload phim mới",
+      description: "Tải lên phim mới vào hệ thống",
+      icon: Upload,
+      href: "/admin/movies/upload",
+      color: "bg-red-600 hover:bg-red-700"
     },
   ];
 

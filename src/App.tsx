@@ -11,6 +11,8 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AccountManagement from "./pages/admin/AccountManagement";
 import ProfileManagement from "./pages/admin/ProfileManagement";
 import CreateAccount from "./pages/admin/CreateAccount";
+import MovieUpload from "./pages/admin/MovieUpload";
+import MovieManagement from "./pages/admin/MovieManagement";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 import { AuthProvider } from "./providers/AuthProvider";
 
@@ -119,10 +121,17 @@ export default function AppRouter() {
           element={
             <ProtectedRoute requireAdmin={true}>
               <AdminLayout>
-                <div className="p-6">
-                  <h1 className="text-2xl font-bold text-white">Quản lý phim</h1>
-                  <p className="text-gray-400 mt-2">Tính năng đang phát triển...</p>
-                </div>
+                <MovieManagement />
+              </AdminLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/movies/upload" 
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout>
+                <MovieUpload />
               </AdminLayout>
             </ProtectedRoute>
           } 

@@ -184,5 +184,21 @@ export const moviesApi = {
       console.error("Failed to fetch trending movies:", error);
       return [];
     }
+  },
+
+  // Create new movie (Bước 1: Tạo Movie Metadata)
+  createMovie: async (movieData: any): Promise<Movie> => {
+    try {
+      console.log("🎬 Creating movie metadata...");
+      const response = await apiClient.post<Movie>("/movie/movies", movieData);
+      console.log("✅ Movie metadata created:", response.data.id);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Failed to create movie:", error);
+      throw new MovieError(
+        error.response?.data?.message || "Failed to create movie",
+        error.response?.status
+      );
+    }
   }
 };

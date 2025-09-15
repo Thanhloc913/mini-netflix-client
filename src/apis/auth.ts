@@ -184,7 +184,7 @@ export async function updateProfile(id: string, name: string, avatar?: File): Pr
       formData.append("avatar", avatar);
     }
 
-    const response = await apiClient.put(`/auth/profile/${id}`, formData, {
+    const response = await apiClient.patch(`/auth/profile/${id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
