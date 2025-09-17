@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/store/auth';
-import { useCurrentUser, useLogout } from '@/hooks/queries/useAuthQueries';
+import { useCurrentUser } from '@/hooks/queries/useAuthQueries';
+import { useLogout } from '@/hooks/mutations/useAuthMutations';
 
 export function useAuth() {
   const { user, isAuthenticated, isAdmin, accessToken } = useAuthStore();

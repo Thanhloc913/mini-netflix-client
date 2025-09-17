@@ -45,15 +45,13 @@ export default function AppRouter() {
           } 
         />
 
-        {/* Protected routes */}
+        {/* Public Home route - accessible without login */}
         <Route 
           path="/" 
           element={
-            <ProtectedRoute>
-              <MainLayout>
-                <Home />
-              </MainLayout>
-            </ProtectedRoute>
+            <MainLayout>
+              <Home />
+            </MainLayout>
           } 
         />
         <Route 

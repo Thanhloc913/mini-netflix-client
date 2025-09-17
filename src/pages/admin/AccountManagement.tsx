@@ -1,16 +1,17 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { useAccounts, useDeleteAccount } from "@/hooks/queries/useAuthQueries";
+import { useAccounts } from "@/hooks/queries/useAuthQueries";
+import { useDeleteAccount } from "@/hooks/mutations/useAuthMutations";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Account } from "@/types/auth";
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
   Filter,
   Shield,
   User
@@ -147,11 +148,10 @@ export default function AccountManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      account.role === "ADMIN" 
-                        ? "bg-red-100 text-red-800" 
-                        : "bg-green-100 text-green-800"
-                    }`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${account.role === "ADMIN"
+                      ? "bg-red-100 text-red-800"
+                      : "bg-green-100 text-green-800"
+                      }`}>
                       {account.role === "ADMIN" ? (
                         <Shield className="w-3 h-3 mr-1" />
                       ) : (
@@ -193,7 +193,7 @@ export default function AccountManagement() {
               Không có tài khoản nào
             </h3>
             <p className="mt-1 text-sm text-gray-400">
-              {searchQuery || roleFilter !== "ALL" 
+              {searchQuery || roleFilter !== "ALL"
                 ? "Không tìm thấy tài khoản phù hợp với bộ lọc."
                 : "Chưa có tài khoản nào trong hệ thống."
               }

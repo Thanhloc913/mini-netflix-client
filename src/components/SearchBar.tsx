@@ -3,6 +3,7 @@ import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useMovieSearch } from "@/hooks/useMovies";
+import { useDebounce } from "@/hooks/useDebounce";
 import { MovieCard } from "./MovieCard";
 import type { Movie } from "@/types/movie";
 
@@ -15,8 +16,9 @@ export function SearchBar({ onMoviePlay }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  const { data: results = [], isLoading: loading } = useMovieSearch(query);
+
+  const debouncedQuery = useDebounce(query, 500);
+  const { data: results = [], isLoading: loading } = useMovieSearch(debouncedQuery);
 
   // Focus input khi expand
   useEffect(() => {
@@ -66,9 +68,9 @@ export function SearchBar({ onMoviePlay }: SearchBarProps) {
 
   if (!isExpanded) {
     return (
-      <Button 
-        variant="ghost" 
-        size="sm" 
+      <Button
+        variant="ghost"
+        size="sm"
         className="h-8 px-3 text-sm text-neutral-300 hover:bg-white/10 hover:text-white transition-all duration-200"
         onClick={handleExpand}
       >
@@ -82,7 +84,7 @@ export function SearchBar({ onMoviePlay }: SearchBarProps) {
     <div ref={containerRef} className="relative">
       {/* Backdrop overlay */}
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
-      
+
       {/* Search container */}
       <div className="fixed top-20 left-1/2 transform -translate-x-1/2 w-full max-w-2xl z-50 px-4 max-h-[calc(100vh-6rem)]">
         <div className="bg-neutral-800/95 backdrop-blur-md rounded-2xl shadow-2xl border border-neutral-700/50 overflow-hidden">
@@ -131,20 +133,20 @@ export function SearchBar({ onMoviePlay }: SearchBarProps) {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {results.slice(0, 8).map((movie) => (
                     <div key={movie.id} className="w-full">
-                      <MovieCard 
-                        movie={movie} 
+                      <MovieCard
+                        movie={movie}
                         onPlay={(movie) => {
                           onMoviePlay?.(movie);
                           handleClose();
-                        }} 
+                        }}
                       />
                     </div>
                   ))}
                 </div>
                 {results.length > 8 && (
                   <div className="text-center mt-4">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       className="border-neutral-600 text-neutral-300 hover:bg-neutral-700"
                     >

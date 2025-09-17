@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCreateMovie } from './useMovieQueries';
-import { useGetPresignedUrl, useUploadToBlob, useCreateVideoAsset } from './useFileQueries';
+import { useCreateMovie } from '../mutations/useMovieMutations';
+import { useGetPresignedUrl, useUploadToBlob, useCreateVideoAsset } from '../mutations/useFileMutations';
 import { queryKeys } from '@/lib/query-keys';
 import type { MovieUploadData } from '@/types/movie';
 
