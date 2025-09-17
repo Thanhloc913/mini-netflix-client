@@ -1,7 +1,6 @@
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { moviesApi } from '@/apis/movies';
 import { queryKeys } from '@/lib/query-keys';
-import type { MovieUploadData } from '@/types/movie';
 
 // Get movies with pagination
 export function useMovies(page: number = 1, limit: number = 20) {
@@ -13,7 +12,7 @@ export function useMovies(page: number = 1, limit: number = 20) {
   });
 }
 
-// Infinite query cho pagination
+// Infinite movies query
 export function useInfiniteMovies(limit: number = 20) {
   return useInfiniteQuery({
     queryKey: queryKeys.movies.lists(),
@@ -49,7 +48,7 @@ export function useMovieCategories() {
   });
 }
 
-// Get single movie by ID
+// Get single movie
 export function useMovie(id: string) {
   return useQuery({
     queryKey: queryKeys.movies.detail(id),
@@ -78,60 +77,6 @@ export function useTrendingMovies() {
     queryFn: moviesApi.getTrendingMovies,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
-  });
-}
-
-// Create movie mutation
-export function useCreateMovie() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (movieData: MovieUploadData) => moviesApi.createMovie(movieData),
-    onSuccess: (newMovie) => {
-      // Invalidate movies lists to refetch
-      queryClient.invalidateQueries({ queryKey: queryKeys.movies.lists() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.movies.categories() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.movies.trending() });
-      
-      // Add new movie to cache
-      queryClient.setQueryData(queryKeys.movies.detail(newMovie.id), newMovie);
-    },
-  });
-}
-
-// Update movie mutation
-export function useUpdateMovie() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<MovieUploadData> }) => 
-      moviesApi.updateMovie(id, data),
-    onSuccess: (updatedMovie) => {
-      // Update specific movie cache
-      queryClient.setQueryData(queryKeys.movies.detail(updatedMovie.id), updatedMovie);
-      
-      // Invalidate lists to refetch
-      queryClient.invalidateQueries({ queryKey: queryKeys.movies.lists() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.movies.categories() });
-    },
-  });
-}
-
-// Delete movie mutation
-export function useDeleteMovie() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => moviesApi.deleteMovie(id),
-    onSuccess: (_, deletedId) => {
-      // Remove from cache
-      queryClient.removeQueries({ queryKey: queryKeys.movies.detail(deletedId) });
-      
-      // Invalidate lists to refetch
-      queryClient.invalidateQueries({ queryKey: queryKeys.movies.lists() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.movies.categories() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.movies.trending() });
-    },
   });
 }
 

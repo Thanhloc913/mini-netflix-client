@@ -5,7 +5,7 @@ import type { LoginRequest } from "@/types/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
-import { useLogin } from "@/hooks/queries/useAuthQueries";
+import { useLogin } from "@/hooks/mutations/useAuthMutations";
 
 export default function LoginPage() {
   const loginMutation = useLogin();

@@ -1,4 +1,4 @@
-// Re-export từ query hooks để maintain backward compatibility
+// Re-export queries
 export { 
   useHomeMovies as useMovies,
   useMovieSearch,
@@ -6,8 +6,12 @@ export {
   useFeaturedMovies,
   useMovieCategories,
   useMovie,
-  useTrendingMovies,
+  useTrendingMovies
+} from '@/hooks/queries/useMovieQueries';
+
+// Re-export mutations
+export {
   useCreateMovie,
   useUpdateMovie,
   useDeleteMovie
-} from '@/hooks/queries/useMovieQueries';
+} from '@/hooks/mutations/useMovieMutations';

@@ -7,7 +7,7 @@ import type { RegisterRequest } from "@/types/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
-import { useRegister } from "@/hooks/queries/useAuthQueries";
+import { useRegister } from "@/hooks/mutations/useAuthMutations";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function RegisterPage() {
