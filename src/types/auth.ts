@@ -30,3 +30,27 @@ export type AuthUser = {
   account: Account;
   profile: Profile;
 };
+
+// Request types
+export type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+export type RegisterRequest = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: "USER" | "ADMIN";
+  name: string;
+};
+
+export type UpdateProfileRequest = {
+  name: string;
+};
+
+export type ChangePasswordRequest = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};

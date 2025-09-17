@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { loginApi } from "@/apis/auth";
 import { useAuthStore } from "@/store/auth";
-import type { loginType } from "@/schemas/auth.schema";
+// LoginRequest type is used in form
 import { LoginSchema } from "@/schemas/auth.schema";
 
 export default function LoginAdminPage() {
@@ -14,12 +14,12 @@ export default function LoginAdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<loginType>({
+  const form = useForm({
     resolver: zodResolver(LoginSchema),
-    defaultValues: { username: "", password: "" },
+    defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = async (values: loginType) => {
+  const onSubmit = async (values: any) => {
     setError(null);
     setLoading(true);
     try {
@@ -42,7 +42,7 @@ export default function LoginAdminPage() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>

@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { moviesApi } from "@/apis/movies";
-import { filesApi } from "@/apis/files";
 import type { Movie } from "@/types/movie";
 import { Plus, Film, Eye, Edit, Trash2, Upload, Play, Clock, Calendar } from "lucide-react";
 
@@ -29,7 +27,7 @@ export default function MovieManagement() {
     }
   };
 
-  const handleDeleteMovie = async (movieId: string) => {
+  const handleDeleteMovie = async (_movieId: string) => {
     if (!confirm("Bạn có chắc chắn muốn xóa phim này?")) return;
     
     try {

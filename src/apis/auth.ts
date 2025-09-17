@@ -49,7 +49,7 @@ export async function login(payload: LoginRequest): Promise<TokenPair> {
   }
 }
 
-export async function refreshToken(refresh_token: string): Promise<TokenPair> {
+export async function refreshTokens(refresh_token: string): Promise<TokenPair> {
   try {
     const response = await apiClient.post<TokenPair>("/auth/refresh", { refresh_token });
     return response.data;
@@ -261,7 +261,7 @@ export async function changePassword(currentPassword: string, newPassword: strin
 // Backward compatibility aliases
 export const loginApi = login;
 export const registerApi = register;
-export const refreshTokenApi = refreshToken;
+export const refreshTokenApi = refreshTokens;
 
 // Convenience functions
 export async function loginUser(credentials: LoginRequest): Promise<TokenPair> {
@@ -276,5 +276,5 @@ export async function registerUser(
 }
 
 export async function refreshUserToken(refreshToken: string): Promise<TokenPair> {
-  return refreshToken(refreshToken);
+  return refreshTokens(refreshToken);
 }

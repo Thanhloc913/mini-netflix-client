@@ -1,16 +1,19 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterSchema, type RegisterRequest } from "@/schemas/auth.schema";
+import { useNavigate } from "react-router-dom";
+import { RegisterSchema } from "@/schemas/auth.schema";
+import type { RegisterRequest } from "@/types/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useRegister } from "@/hooks/queries/useAuthQueries";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { register: registerUser, error, isAuthenticating, isAuthenticated, clearError } = useAuth();
-  const [success, setSuccess] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const registerMutation = useRegister();
   const [avatar, setAvatar] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -18,8 +21,7 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-    setFocus,
-    watch,
+    // watch is available for form validation if needed
   } = useForm<RegisterRequest>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -31,9 +33,6 @@ export default function RegisterPage() {
     },
   });
 
-  // Watch password to show strength indicator
-  const password = watch("password");
-
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
@@ -41,224 +40,186 @@ export default function RegisterPage() {
     }
   }, [isAuthenticated, navigate]);
 
-  // Focus on email field when component mounts
-  useEffect(() => {
-    setFocus("email");
-  }, [setFocus]);
-
-  // Clear error when user starts typing
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => {
-        clearError();
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, clearError]);
+  const onSubmit = (data: RegisterRequest) => {
+    registerMutation.mutate({ userData: data, avatar: avatar || undefined });
+  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert("Kích thước file không được vượt quá 5MB");
-        return;
-      }
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        alert("Chỉ chấp nhận file hình ảnh");
-        return;
-      }
       setAvatar(file);
     }
   };
 
-  const onSubmit = async (data: RegisterRequest) => {
-    try {
-      await registerUser(data, avatar || undefined);
-      setSuccess(true);
-      setTimeout(() => {
-        navigate("/", { replace: true });
-      }, 2000);
-    } catch (err) {
-      // Error is handled by useAuth hook
-      console.error("Registration failed:", err);
+  const removeAvatar = () => {
+    setAvatar(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
-  if (success) {
-    return (
-      <div className="bg-black/75 backdrop-blur-sm rounded-lg p-8 shadow-2xl text-center max-w-md w-full">
-        <div className="mb-6">
-          <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <h1 className="text-white text-3xl font-semibold mb-4">Đăng ký thành công!</h1>
-          <p className="text-gray-300 mb-4">Chào mừng bạn đến với Netflix! Đang chuyển hướng...</p>
-        </div>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-black/75 backdrop-blur-sm rounded-lg p-8 shadow-2xl max-w-md w-full">
-      <h1 className="text-white text-3xl font-semibold mb-8">Đăng ký</h1>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <Input
-            {...register("email")}
-            type="email"
-            placeholder="Email"
-            className="w-full h-14 bg-gray-700 border-gray-600 text-white placeholder-gray-400 rounded-md focus:bg-gray-600 focus:border-white transition-colors"
-            disabled={isAuthenticating}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-          )}
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-2">
+            My<span className="text-red-600">Netflix</span>
+          </h1>
+          <h2 className="text-2xl font-semibold text-white">Đăng ký tài khoản</h2>
+          <p className="text-gray-400 mt-2">
+            Tạo tài khoản để trải nghiệm dịch vụ streaming tốt nhất
+          </p>
         </div>
 
-        <div>
-          <Input
-            {...register("name")}
-            type="text"
-            placeholder="Tên hiển thị"
-            className="w-full h-14 bg-gray-700 border-gray-600 text-white placeholder-gray-400 rounded-md focus:bg-gray-600 focus:border-white transition-colors"
-            disabled={isAuthenticating}
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-          )}
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              Email
+            </label>
+            <Input
+              id="email"
+              type="email"
+              {...register("email")}
+              className="w-full bg-gray-800 border-gray-700 text-white"
+              placeholder="your@email.com"
+              disabled={registerMutation.isPending}
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
+            )}
+          </div>
 
-        <div>
-          <Input
-            {...register("password")}
-            type="password"
-            placeholder="Mật khẩu"
-            className="w-full h-14 bg-gray-700 border-gray-600 text-white placeholder-gray-400 rounded-md focus:bg-gray-600 focus:border-white transition-colors"
-            disabled={isAuthenticating}
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-          )}
-          {password && password.length > 0 && (
-            <div className="mt-2">
-              <div className="flex gap-1">
-                {[1, 2, 3, 4].map((level) => (
-                  <div
-                    key={level}
-                    className={`h-1 flex-1 rounded ${password.length >= level * 2
-                      ? password.length >= 8
-                        ? "bg-green-500"
-                        : password.length >= 6
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      : "bg-gray-600"
-                      }`}
-                  />
-                ))}
-              </div>
-              <p className="text-xs text-gray-400 mt-1">
-                Độ mạnh mật khẩu: {password.length >= 8 ? "Mạnh" : password.length >= 6 ? "Trung bình" : "Yếu"}
+          {/* Name */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+              Tên hiển thị
+            </label>
+            <Input
+              id="name"
+              type="text"
+              {...register("name")}
+              className="w-full bg-gray-800 border-gray-700 text-white"
+              placeholder="Tên của bạn"
+              disabled={registerMutation.isPending}
+            />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              Mật khẩu
+            </label>
+            <Input
+              id="password"
+              type="password"
+              {...register("password")}
+              className="w-full bg-gray-800 border-gray-700 text-white"
+              placeholder="••••••••"
+              disabled={registerMutation.isPending}
+            />
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-400">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+              Xác nhận mật khẩu
+            </label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              {...register("confirmPassword")}
+              className="w-full bg-gray-800 border-gray-700 text-white"
+              placeholder="••••••••"
+              disabled={registerMutation.isPending}
+            />
+            {errors.confirmPassword && (
+              <p className="mt-1 text-sm text-red-400">{errors.confirmPassword.message}</p>
+            )}
+          </div>
+
+          {/* Avatar Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Ảnh đại diện (tùy chọn)
+            </label>
+            <div className="flex items-center space-x-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={registerMutation.isPending}
+                className="border-gray-600 text-gray-300 hover:bg-gray-800"
+              >
+                Chọn ảnh
+              </Button>
+              {avatar && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-400">{avatar.name}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={removeAvatar}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    Xóa
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Error Display */}
+          {registerMutation.error && (
+            <div className="bg-red-900/50 border border-red-500 rounded-lg p-3">
+              <p className="text-red-200 text-sm">
+                {registerMutation.error instanceof Error 
+                  ? registerMutation.error.message 
+                  : "Đăng ký thất bại"}
               </p>
             </div>
           )}
-        </div>
 
-        <div>
-          <Input
-            {...register("confirmPassword")}
-            type="password"
-            placeholder="Xác nhận mật khẩu"
-            className="w-full h-14 bg-gray-700 border-gray-600 text-white placeholder-gray-400 rounded-md focus:bg-gray-600 focus:border-white transition-colors"
-            disabled={isAuthenticating}
-          />
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
-          )}
-        </div>
-
-        {/* Avatar Upload */}
-        <div>
-          <label className="block text-white text-sm mb-2">Ảnh đại diện (tùy chọn)</label>
-          <div className="flex items-center gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isAuthenticating}
-              className="border-gray-600 text-white hover:bg-gray-700"
-            >
-              Chọn ảnh
-            </Button>
-            {avatar && (
-              <span className="text-gray-300 text-sm truncate flex-1">{avatar.name}</span>
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            disabled={registerMutation.isPending}
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3"
+          >
+            {registerMutation.isPending ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Đang đăng ký...
+              </div>
+            ) : (
+              "Đăng ký"
             )}
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            className="hidden"
-          />
-          <p className="text-xs text-gray-400 mt-1">Chấp nhận JPG, PNG. Tối đa 5MB.</p>
+          </Button>
+        </form>
+
+        <div className="text-center">
+          <p className="text-gray-400">
+            Đã có tài khoản?{" "}
+            <Link to="/login" className="text-red-400 hover:text-red-300 font-medium">
+              Đăng nhập ngay
+            </Link>
+          </p>
         </div>
-
-        {error && (
-          <div className="bg-red-600/20 border border-red-600/50 text-red-400 text-sm p-3 rounded-md">
-            {error.includes("exist") ? "Email đã tồn tại trên hệ thống" : error}
-          </div>
-        )}
-
-        <Button
-          type="submit"
-          disabled={isAuthenticating}
-          className="w-full h-12 bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 text-white font-semibold rounded-md transition-colors"
-        >
-          {isAuthenticating ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Đang đăng ký...
-            </div>
-          ) : (
-            "Đăng ký"
-          )}
-        </Button>
-
-        <div className="text-gray-400 text-sm">
-          Đã có tài khoản?{" "}
-          <Link to="/login" className="text-white hover:underline">
-            Đăng nhập ngay
-          </Link>
-          .
-        </div>
-
-        <div className="text-gray-400 text-xs leading-relaxed">
-          Việc đăng ký này cho biết bạn đồng ý với{" "}
-          <Link to="#" className="text-blue-500 hover:underline">
-            Điều khoản sử dụng
-          </Link>{" "}
-          và{" "}
-          <Link to="#" className="text-blue-500 hover:underline">
-            Chính sách bảo mật
-          </Link>{" "}
-          của chúng tôi.
-        </div>
-
-        <div className="text-gray-400 text-xs leading-relaxed">
-          Trang này được Google reCAPTCHA bảo vệ để đảm bảo bạn không phải là robot.{" "}
-          <Link to="#" className="text-blue-500 hover:underline">
-            Tìm hiểu thêm.
-          </Link>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }
-
-

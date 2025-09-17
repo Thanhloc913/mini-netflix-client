@@ -4,7 +4,7 @@ import { MovieRow } from "@/components/MovieRow";
 import type { Movie } from "@/types/movie";
 
 export default function Home() {
-    const { featuredMovies, movieCategories, loading, error } = useMovies();
+    const { featuredMovies, movieCategories, isLoading, error, refetch } = useMovies();
 
     const handleMoviePlay = (movie: Movie) => {
         // TODO: Implement movie player or navigation
@@ -12,7 +12,7 @@ export default function Home() {
         alert(`Đang phát: ${movie.title}`);
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="min-h-screen bg-gray-900 flex items-center justify-center">
                 <div className="text-center">
@@ -27,9 +27,9 @@ export default function Home() {
         return (
             <div className="min-h-screen bg-gray-900 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="text-red-500 text-xl mb-4">Lỗi: {error}</div>
+                    <div className="text-red-500 text-xl mb-4">Lỗi: {error.message || 'Có lỗi xảy ra'}</div>
                     <button
-                        onClick={() => window.location.reload()}
+                        onClick={() => refetch()}
                         className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded"
                     >
                         Thử lại

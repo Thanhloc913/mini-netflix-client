@@ -29,7 +29,6 @@ export const ChangePasswordSchema = z.object({
   path: ["confirmPassword"],
 });
 
-export type LoginRequest = z.infer<typeof LoginSchema>;
-export type RegisterRequest = z.infer<typeof RegisterSchema>;
-export type UpdateProfileRequest = z.infer<typeof UpdateProfileSchema>;
-export type ChangePasswordRequest = z.infer<typeof ChangePasswordSchema>;
+export type LoginRequest = z.infer<typeof LoginSchema>
+export type RegisterRequest = z.infer<typeof RegisterSchema>
+

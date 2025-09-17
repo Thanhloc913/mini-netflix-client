@@ -29,3 +29,18 @@ export interface MoviesResponse {
   page: number;
   limit: number;
 }
+
+export interface MovieUploadData {
+  title: string;
+  description: string;
+  releaseDate: string;
+  duration?: number;
+  isSeries: boolean;
+  rating: string;
+  posterUrl?: string;
+  trailerUrl?: string;
+  genreIds?: string[];
+  castIds?: string[];
+  genres?: string[];
+  casts?: string[];
+}

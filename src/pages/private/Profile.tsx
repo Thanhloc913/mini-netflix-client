@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdateProfileSchema, ChangePasswordSchema, type UpdateProfileRequest, type ChangePasswordRequest } from "@/schemas/auth.schema";
+import { UpdateProfileSchema, ChangePasswordSchema } from "@/schemas/auth.schema";
+import type { UpdateProfileRequest, ChangePasswordRequest } from "@/types/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,7 +11,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { User, Camera, Lock, Trash2, Save, X } from "lucide-react";
 
 export default function ProfilePage() {
-  const { user, logout, refreshUserData } = useAuth();
+  const { user, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -70,7 +71,7 @@ export default function ProfilePage() {
         await updateProfile(user.profile.id, data.name, avatar || undefined);
       }
 
-      await refreshUserData();
+      // Profile will be updated via React Query cache
       setSuccess("Cập nhật thông tin thành công!");
       setIsEditing(false);
       setAvatar(null);

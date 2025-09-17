@@ -1,45 +1,25 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { getAccounts, getProfiles } from "@/apis/auth";
+import { useAccounts, useProfiles } from "@/hooks/queries/useAuthQueries";
+import { useMovies } from "@/hooks/queries/useMovieQueries";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Users, UserCheck, Film, TrendingUp, Eye, Plus, Upload } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
-  const [stats, setStats] = useState({
-    totalAccounts: 0,
-    totalProfiles: 0,
-    totalMovies: 6, // Mock data
-    activeUsers: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: accounts = [], isLoading: accountsLoading } = useAccounts();
+  const { data: profiles = [], isLoading: profilesLoading } = useProfiles();
+  const { data: moviesData, isLoading: moviesLoading } = useMovies(1, 1);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const [accounts, profiles] = await Promise.all([
-          getAccounts().catch(() => []),
-          getProfiles().catch(() => [])
-        ]);
+  const stats = useMemo(() => ({
+    totalAccounts: accounts.length,
+    totalProfiles: profiles.length,
+    totalMovies: moviesData?.total || 0,
+    activeUsers: accounts.filter(acc => acc.role === "USER").length,
+  }), [accounts.length, profiles.length, moviesData?.total]);
 
-        setStats({
-          totalAccounts: accounts.length,
-          totalProfiles: profiles.length,
-          totalMovies: 6, // Mock data
-          activeUsers: accounts.filter(acc => acc.role === "USER").length,
-        });
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Lỗi tải dữ liệu");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
+  const loading = accountsLoading || profilesLoading || moviesLoading;
 
   if (loading) {
     return <LoadingSpinner message="Đang tải dashboard..." />;
@@ -119,11 +99,7 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      {error && (
-        <div className="mb-6 bg-red-600/20 border border-red-600/50 text-red-400 p-4 rounded-lg">
-          {error}
-        </div>
-      )}
+
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

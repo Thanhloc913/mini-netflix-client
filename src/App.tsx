@@ -15,11 +15,13 @@ import MovieUpload from "./pages/admin/MovieUpload";
 import MovieManagement from "./pages/admin/MovieManagement";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 import { AuthProvider } from "./providers/AuthProvider";
+import { QueryProvider } from "./providers/QueryProvider";
 
 export default function AppRouter() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
+    <QueryProvider>
+      <BrowserRouter>
+        <AuthProvider>
         <Routes>
         {/* Public routes */}
         <Route 
@@ -156,7 +158,8 @@ export default function AppRouter() {
           } 
         />
         </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryProvider>
   );
 }

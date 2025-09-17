@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { getAccounts, deleteAccount } from "@/apis/auth";
+import { useAccounts, useDeleteAccount } from "@/hooks/queries/useAuthQueries";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
@@ -12,82 +12,36 @@ import {
   Edit, 
   Trash2, 
   Filter,
-  MoreHorizontal,
   Shield,
   User
 } from "lucide-react";
 
 export default function AccountManagement() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: accounts = [], isLoading: loading, error } = useAccounts();
+  const deleteAccountMutation = useDeleteAccount();
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"ALL" | "USER" | "ADMIN">("ALL");
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
     account: Account | null;
   }>({ isOpen: false, account: null });
-  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    fetchAccounts();
-  }, []);
-
-  useEffect(() => {
-    filterAccounts();
+  const filteredAccounts = useMemo(() => {
+    return accounts.filter(account => {
+      const matchesSearch = account.email.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesRole = roleFilter === "ALL" || account.role === roleFilter;
+      return matchesSearch && matchesRole;
+    });
   }, [accounts, searchQuery, roleFilter]);
-
-  const fetchAccounts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getAccounts();
-      setAccounts(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Lỗi tải danh sách tài khoản");
-      // Mock data nếu API thất bại
-      setAccounts([
-        { id: "1", email: "admin@example.com", role: "ADMIN" },
-        { id: "2", email: "user1@example.com", role: "USER" },
-        { id: "3", email: "user2@example.com", role: "USER" },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterAccounts = () => {
-    let filtered = accounts;
-
-    // Filter by search query
-    if (searchQuery) {
-      filtered = filtered.filter(account =>
-        account.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        account.id.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Filter by role
-    if (roleFilter !== "ALL") {
-      filtered = filtered.filter(account => account.role === roleFilter);
-    }
-
-    setFilteredAccounts(filtered);
-  };
 
   const handleDeleteAccount = async () => {
     if (!deleteConfirm.account) return;
 
     try {
-      setDeleting(true);
-      await deleteAccount(deleteConfirm.account.id);
-      setAccounts(accounts.filter(acc => acc.id !== deleteConfirm.account!.id));
+      await deleteAccountMutation.mutateAsync(deleteConfirm.account.id);
       setDeleteConfirm({ isOpen: false, account: null });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Lỗi xóa tài khoản");
-    } finally {
-      setDeleting(false);
+      console.error("Failed to delete account:", err);
     }
   };
 
@@ -96,63 +50,64 @@ export default function AccountManagement() {
   }
 
   return (
-    <div className="p-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Quản lý tài khoản</h1>
-          <p className="text-gray-400">
-            Quản lý tất cả tài khoản trong hệ thống ({filteredAccounts.length} tài khoản)
+          <h1 className="text-3xl font-bold text-white">Quản lý tài khoản</h1>
+          <p className="text-gray-400 mt-1">
+            Quản lý tài khoản người dùng trong hệ thống
           </p>
         </div>
         <Link to="/admin/accounts/create">
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
+          <Button className="bg-red-600 hover:bg-red-700">
+            <Plus className="w-4 h-4 mr-2" />
             Tạo tài khoản
           </Button>
         </Link>
       </div>
 
-      {error && (
-        <div className="mb-6 bg-red-600/20 border border-red-600/50 text-red-400 p-4 rounded-lg">
-          {error}
-        </div>
-      )}
-
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-4 mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Tìm kiếm theo email hoặc ID..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-700 border-gray-600 text-white"
-              />
-            </div>
+      <div className="bg-gray-800 rounded-lg p-6">
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Tìm kiếm theo email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-gray-700 border-gray-600 text-white"
+            />
           </div>
-          <div className="flex gap-2">
+
+          {/* Role Filter */}
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-400" />
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value as "ALL" | "USER" | "ADMIN")}
-              className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+              className="bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white"
             >
               <option value="ALL">Tất cả vai trò</option>
               <option value="USER">Người dùng</option>
               <option value="ADMIN">Quản trị viên</option>
             </select>
-            <Button variant="outline" className="border-gray-600 text-gray-300">
-              <Filter className="h-4 w-4 mr-2" />
-              Lọc
-            </Button>
           </div>
         </div>
       </div>
 
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-900/50 border border-red-500 rounded-lg p-4">
+          <p className="text-red-200">
+            {error instanceof Error ? error.message : "Có lỗi xảy ra"}
+          </p>
+        </div>
+      )}
+
       {/* Accounts Table */}
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-gray-800 rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-700">
@@ -173,15 +128,13 @@ export default function AccountManagement() {
             </thead>
             <tbody className="divide-y divide-gray-700">
               {filteredAccounts.map((account) => (
-                <tr key={account.id} className="hover:bg-gray-750">
+                <tr key={account.id} className="hover:bg-gray-700/50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                        {account.role === "ADMIN" ? (
-                          <Shield className="h-5 w-5 text-red-400" />
-                        ) : (
-                          <User className="h-5 w-5 text-blue-400" />
-                        )}
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <div className="h-10 w-10 rounded-full bg-gray-600 flex items-center justify-center">
+                          <User className="w-5 h-5 text-gray-300" />
+                        </div>
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-white">
@@ -194,31 +147,36 @@ export default function AccountManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      account.role === "ADMIN"
-                        ? "bg-red-600/20 text-red-400"
-                        : "bg-blue-600/20 text-blue-400"
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      account.role === "ADMIN" 
+                        ? "bg-red-100 text-red-800" 
+                        : "bg-green-100 text-green-800"
                     }`}>
+                      {account.role === "ADMIN" ? (
+                        <Shield className="w-3 h-3 mr-1" />
+                      ) : (
+                        <User className="w-3 h-3 mr-1" />
+                      )}
                       {account.role === "ADMIN" ? "Quản trị viên" : "Người dùng"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                    {account.createdAt ? new Date(account.createdAt).toLocaleDateString('vi-VN') : "N/A"}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    {account.createdAt ? new Date(account.createdAt).toLocaleDateString('vi-VN') : 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
-                      <Link to={`/admin/accounts/${account.id}`}>
-                        <Button variant="outline" size="sm" className="border-gray-600 text-gray-300">
-                          <Edit className="h-4 w-4" />
+                      <Link to={`/admin/accounts/${account.id}/edit`}>
+                        <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300">
+                          <Edit className="w-4 h-4" />
                         </Button>
                       </Link>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
+                        className="text-red-400 hover:text-red-300"
                         onClick={() => setDeleteConfirm({ isOpen: true, account })}
-                        className="border-red-600 text-red-400 hover:bg-red-900/20"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </td>
@@ -230,9 +188,16 @@ export default function AccountManagement() {
 
         {filteredAccounts.length === 0 && (
           <div className="text-center py-12">
-            <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg">Không tìm thấy tài khoản nào</p>
-            <p className="text-gray-500 text-sm">Thử thay đổi bộ lọc hoặc tạo tài khoản mới</p>
+            <User className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-gray-300">
+              Không có tài khoản nào
+            </h3>
+            <p className="mt-1 text-sm text-gray-400">
+              {searchQuery || roleFilter !== "ALL" 
+                ? "Không tìm thấy tài khoản phù hợp với bộ lọc."
+                : "Chưa có tài khoản nào trong hệ thống."
+              }
+            </p>
           </div>
         )}
       </div>
@@ -244,9 +209,9 @@ export default function AccountManagement() {
         onConfirm={handleDeleteAccount}
         title="Xóa tài khoản"
         message={`Bạn có chắc chắn muốn xóa tài khoản "${deleteConfirm.account?.email}"? Hành động này không thể hoàn tác.`}
-        confirmText="Xóa tài khoản"
-        type="danger"
-        loading={deleting}
+        confirmText="Xóa"
+        cancelText="Hủy"
+        loading={deleteAccountMutation.isPending}
       />
     </div>
   );

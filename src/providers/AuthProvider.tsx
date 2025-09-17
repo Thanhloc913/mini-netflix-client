@@ -1,22 +1,33 @@
 import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthStore } from "@/store/auth";
+import { useCurrentUser } from "@/hooks/queries/useAuthQueries";
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { initializeAuth, accessToken, user, isLoading } = useAuth();
-
-  useEffect(() => {
-    // Nếu có token nhưng chưa có user data, fetch ngay
-    if (accessToken && !user && !isLoading) {
-      console.log("🔄 Initializing auth with stored token...");
-      initializeAuth().catch((error) => {
-        console.error("❌ Failed to initialize user data:", error);
-      });
+  const { accessToken, user, setUser } = useAuthStore();
+  
+  // Decode userId từ token
+  const userId = accessToken ? (() => {
+    try {
+      const payload = JSON.parse(atob(accessToken.split('.')[1]));
+      return payload.sub || payload.userId || payload.id;
+    } catch {
+      return null;
     }
-  }, [accessToken, user, isLoading, initializeAuth]);
+  })() : null;
+
+  // Fetch user data với TanStack Query
+  const userQuery = useCurrentUser(userId);
+
+  // Sync user data từ query vào store
+  useEffect(() => {
+    if (userQuery.data && !user) {
+      setUser(userQuery.data);
+    }
+  }, [userQuery.data, user, setUser]);
 
   return <>{children}</>;
 }

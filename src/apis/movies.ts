@@ -8,43 +8,143 @@ export class MovieError extends Error {
   }
 }
 
-
-
 export const moviesApi = {
-  // Get all movies
+  // Get all movies - chỉ dùng API /movie/movies
   getAllMovies: async (page = 1, limit = 20): Promise<MoviesResponse> => {
-    console.log("🎬 Fetching movies from API...");
-    const response = await apiClient.get("/movie/movies", {
-      params: { page, limit }
-    });
-    console.log("✅ Raw API response:", response.data);
-    
-    // Kiểm tra cấu trúc response
-    if (Array.isArray(response.data)) {
-      // Nếu response trả về array trực tiếp
-      console.log("📦 Response is array, converting to MoviesResponse format");
-      return {
-        movies: response.data,
-        total: response.data.length,
-        page: page,
-        limit: limit
-      };
-    } else if (response.data.movies) {
-      // Nếu response có structure như expected
-      console.log("📦 Response has movies property");
-      return response.data;
-    } else {
-      console.error("❌ Unexpected response structure:", response.data);
-      throw new Error("Invalid response structure");
+    try {
+      console.log("🎬 Fetching movies from API...");
+      const response = await apiClient.get("/movie/movies", {
+        params: { page, limit }
+      });
+      console.log("✅ Raw API response:", response.data);
+
+      // Kiểm tra cấu trúc response từ console log
+      if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        // API trả về structure: { data: [...], meta: {...} }
+        console.log("📦 Response has data property with array, found", response.data.data.length, "movies");
+        return {
+          movies: response.data.data,
+          total: response.data.meta?.total || response.data.data.length,
+          page: response.data.meta?.page || page,
+          limit: response.data.meta?.limit || limit
+        };
+      } else if (Array.isArray(response.data)) {
+        // Nếu response trả về array trực tiếp
+        console.log("📦 Response is array, found", response.data.length, "movies");
+        return {
+          movies: response.data,
+          total: response.data.length,
+          page: page,
+          limit: limit
+        };
+      } else if (response.data && response.data.movies) {
+        // Nếu response có structure như expected
+        console.log("📦 Response has movies property, found", response.data.movies.length, "movies");
+        return response.data;
+      } else {
+        console.error("❌ Unexpected response structure:", response.data);
+        console.log("📦 Available keys:", Object.keys(response.data || {}));
+
+        // Thử extract data từ bất kỳ property nào có array
+        const dataKeys = Object.keys(response.data || {});
+        for (const key of dataKeys) {
+          if (Array.isArray(response.data[key])) {
+            console.log(`📦 Found array in property: ${key}, with ${response.data[key].length} items`);
+            return {
+              movies: response.data[key],
+              total: response.data[key].length,
+              page: page,
+              limit: limit
+            };
+          }
+        }
+
+        throw new MovieError("No movie data found in response");
+      }
+    } catch (error: any) {
+      console.error("❌ API call failed:", error);
+
+      // Chỉ fallback khi có lỗi thực sự (network, server error)
+      if (error.code === 'ECONNREFUSED' || error.response?.status >= 500) {
+        console.log("🔄 Using mock data fallback due to server error");
+        const mockMovies: Movie[] = [
+          {
+            id: "mock-1",
+            title: "Gachakuza",
+            description: "Bị buộc tội giết người và nằm xuống hố, đứa trẻ mồ côi nọ gặp nhóm chiến binh quái vật có sức mạnh đặc biệt để khám phá sự thật.",
+            releaseDate: "2024-01-01",
+            duration: 24,
+            isSeries: true,
+            posterUrl: "https://gachiakuta-anime.com/assets/img/top/main/kv.jpg",
+            trailerUrl: null,
+            videoAssets: [],
+            rating: "8.7",
+            createdAt: "2024-01-01",
+            updatedAt: "2024-01-01",
+            deletedAt: null,
+            episodes: [],
+            genres: [{ name: "Action" }, { name: "Fantasy" }],
+            casts: []
+          },
+          {
+            id: "mock-2",
+            title: "Hoa Thơm Kiêu Hãnh",
+            description: "Một câu chuyện tình yêu đầy cảm xúc về những người trẻ tìm kiếm ý nghĩa cuộc sống qua những mối quan hệ phức tạp.",
+            releaseDate: "2024-02-01",
+            duration: 24,
+            isSeries: true,
+            posterUrl: "https://image.tmdb.org/t/p/w1280/cRtyoypoIfrW8SWyVw0y554xWQ.jpg",
+            trailerUrl: null,
+            videoAssets: [],
+            rating: "8.4",
+            createdAt: "2024-02-01",
+            updatedAt: "2024-02-01",
+            deletedAt: null,
+            episodes: [],
+            genres: [{ name: "Romance" }, { name: "Drama" }],
+            casts: []
+          },
+          {
+            id: "mock-3",
+            title: "7 Viên Ngọc Rồng",
+            description: "Cuộc phiêu lưu của Goku.",
+            releaseDate: "2024-03-01",
+            duration: 24,
+            isSeries: true,
+            posterUrl: "https://images-na.ssl-images-amazon.com/images/I/810juzDPc1L.jpg",
+            trailerUrl: null,
+            videoAssets: [],
+            rating: "8.5",
+            createdAt: "2024-03-01",
+            updatedAt: "2024-03-01",
+            deletedAt: null,
+            episodes: [],
+            genres: [{ name: "Fantasy" }, { name: "Adventure" }],
+            casts: []
+          }
+        ];
+
+        return {
+          movies: mockMovies,
+          total: mockMovies.length,
+          page: page,
+          limit: limit
+        };
+      }
+
+      // Nếu không phải server error, throw lại để component handle
+      throw error;
     }
   },
 
-  // Get featured movies for hero section (using mock data for now)
+  // Get featured movies for hero section - ALWAYS use mock data
   getFeaturedMovies: async (): Promise<Movie[]> => {
-    // Mock data for hero section
+    console.log("🎬 Using mock featured movies for hero section (no API call)");
+
+    // Always return mock data for hero section - no API call
     const mockFeaturedMovies: Movie[] = [
       {
-        id: "1",
+        id: "hero-1",
         title: "Gachakuza",
         description: "Bị buộc tội giết người và nằm xuống hố, đứa trẻ mồ côi nọ gặp nhóm chiến binh quái vật có sức mạnh đặc biệt để khám phá sự thật.",
         releaseDate: "2024-01-01",
@@ -62,7 +162,7 @@ export const moviesApi = {
         casts: []
       },
       {
-        id: "2",
+        id: "hero-2",
         title: "Hoa Thơm Kiêu Hãnh",
         description: "Một câu chuyện tình yêu đầy cảm xúc về những người trẻ tìm kiếm ý nghĩa cuộc sống qua những mối quan hệ phức tạp.",
         releaseDate: "2024-02-01",
@@ -80,7 +180,7 @@ export const moviesApi = {
         casts: []
       },
       {
-        id: "3",
+        id: "hero-3",
         title: "7 Viên Ngọc Rồng",
         description: "Cuộc phiêu lưu của Goku.",
         releaseDate: "2024-03-01",
@@ -98,40 +198,46 @@ export const moviesApi = {
         casts: []
       }
     ];
-    
+
     return mockFeaturedMovies;
   },
 
-  // Get movie categories (group movies by different criteria)
+  // Get movie categories - dựa trên getAllMovies
   getMovieCategories: async (): Promise<MovieCategory[]> => {
-    const response = await moviesApi.getAllMovies(1, 50);
-    const movies = response.movies;
+    try {
+      const response = await moviesApi.getAllMovies(1, 20);
+      const movies = response.movies;
 
-    // Tạo categories từ movies
-    const categories: MovieCategory[] = [
-      {
-        id: "latest",
-        name: "Mới nhất",
-        movies: movies.slice(0, 10)
-      },
-      {
-        id: "series",
-        name: "Phim bộ",
-        movies: movies.filter(movie => movie.isSeries).slice(0, 10)
-      },
-      {
-        id: "movies",
-        name: "Phim lẻ", 
-        movies: movies.filter(movie => !movie.isSeries).slice(0, 10)
-      },
-      {
-        id: "high-rated",
-        name: "Đánh giá cao",
-        movies: movies.filter(movie => parseFloat(movie.rating) >= 8).slice(0, 10)
-      }
-    ];
+      // Tạo categories từ movies
+      const categories: MovieCategory[] = [
+        {
+          id: "latest",
+          name: "Mới nhất",
+          movies: movies.slice(0, 6)
+        },
+        {
+          id: "series",
+          name: "Phim bộ",
+          movies: movies.filter(movie => movie.isSeries).slice(0, 6)
+        },
+        {
+          id: "movies",
+          name: "Phim lẻ",
+          movies: movies.filter(movie => !movie.isSeries).slice(0, 6)
+        },
+        {
+          id: "high-rated",
+          name: "Đánh giá cao",
+          movies: movies.filter(movie => parseFloat(movie.rating) >= 8).slice(0, 6)
+        }
+      ];
 
-    return categories.filter(cat => cat.movies.length > 0);
+      return categories.filter(cat => cat.movies.length > 0);
+    } catch (error: any) {
+      console.error("❌ Failed to get movie categories:", error);
+      // Trả về mảng rỗng khi API fail
+      return [];
+    }
   },
 
   // Get movies by category
@@ -161,11 +267,11 @@ export const moviesApi = {
   searchMovies: async (query: string): Promise<Movie[]> => {
     try {
       if (!query.trim()) return [];
-      
+
       const response = await moviesApi.getAllMovies(1, 50);
       const lowercaseQuery = query.toLowerCase();
-      
-      return response.movies.filter(movie => 
+
+      return response.movies.filter(movie =>
         movie.title.toLowerCase().includes(lowercaseQuery) ||
         movie.description.toLowerCase().includes(lowercaseQuery)
       );
@@ -186,7 +292,7 @@ export const moviesApi = {
     }
   },
 
-  // Create new movie (Bước 1: Tạo Movie Metadata)
+  // Create new movie
   createMovie: async (movieData: any): Promise<Movie> => {
     try {
       console.log("🎬 Creating movie metadata...");
@@ -197,6 +303,37 @@ export const moviesApi = {
       console.error("❌ Failed to create movie:", error);
       throw new MovieError(
         error.response?.data?.message || "Failed to create movie",
+        error.response?.status
+      );
+    }
+  },
+
+  // Update movie
+  updateMovie: async (id: string, movieData: any): Promise<Movie> => {
+    try {
+      console.log("🎬 Updating movie:", id);
+      const response = await apiClient.put<Movie>(`/movie/movies/${id}`, movieData);
+      console.log("✅ Movie updated:", response.data.id);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Failed to update movie:", error);
+      throw new MovieError(
+        error.response?.data?.message || "Failed to update movie",
+        error.response?.status
+      );
+    }
+  },
+
+  // Delete movie
+  deleteMovie: async (id: string): Promise<void> => {
+    try {
+      console.log("🗑️ Deleting movie:", id);
+      await apiClient.delete(`/movie/movies/${id}`);
+      console.log("✅ Movie deleted:", id);
+    } catch (error: any) {
+      console.error("❌ Failed to delete movie:", error);
+      throw new MovieError(
+        error.response?.data?.message || "Failed to delete movie",
         error.response?.status
       );
     }

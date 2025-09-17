@@ -69,7 +69,7 @@ interface PublicRouteProps {
 }
 
 export function PublicRoute({ children }: PublicRouteProps) {
-  const { isAuthenticated, isLoading, accessToken, user } = useAuth();
+  const { isLoading, accessToken, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {

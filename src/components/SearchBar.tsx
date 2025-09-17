@@ -16,7 +16,7 @@ export function SearchBar({ onMoviePlay }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const { results, loading } = useMovieSearch(query);
+  const { data: results = [], isLoading: loading } = useMovieSearch(query);
 
   // Focus input khi expand
   useEffect(() => {

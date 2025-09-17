@@ -1,33 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// UI components are used in the JSX below
 import { useMovieUpload } from "@/hooks/useMovieUpload";
-import type { MovieUploadData } from "@/types/upload";
+import type { MovieUploadData } from "@/types/movie";
 import { Upload, Film, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 
 export default function MovieUpload() {
   const navigate = useNavigate();
   const { uploadState, uploadMovie, resetUpload } = useMovieUpload();
-  
+
   const [formData, setFormData] = useState<MovieUploadData>({
     title: "",
     description: "",
     releaseDate: "",
     duration: 0,
     isSeries: false,
+    rating: "8.0",
     posterUrl: "",
     trailerUrl: "",
     genreIds: [],
     castIds: []
   });
-  
+
   const [videoFile, setVideoFile] = useState<File | null>(null);
 
   const handleInputChange = (field: keyof MovieUploadData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev: MovieUploadData) => ({ ...prev, [field]: value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +37,7 @@ export default function MovieUpload() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!videoFile) {
       alert("Vui lòng chọn file video");
       return;
@@ -62,7 +60,7 @@ export default function MovieUpload() {
   };
 
   const getStepIcon = (step: string) => {
-    if (uploadState.progress.step === step) {
+    if (uploadState.step === step) {
       if (step === 'error') return <AlertCircle className="w-5 h-5 text-red-500" />;
       if (step === 'completed') return <CheckCircle className="w-5 h-5 text-green-500" />;
       return <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />;
@@ -210,7 +208,7 @@ export default function MovieUpload() {
                   )}
                 </button>
 
-                {uploadState.progress.step === 'completed' && (
+                {uploadState.step === 'completed' && (
                   <button
                     type="button"
                     onClick={resetUpload}
@@ -234,19 +232,18 @@ export default function MovieUpload() {
               {/* Progress Bar */}
               <div>
                 <div className="flex justify-between text-sm text-gray-600 mb-2">
-                  <span>{uploadState.progress.message}</span>
-                  <span>{uploadState.progress.progress}%</span>
+                  <span>{uploadState.message}</span>
+                  <span>{uploadState.progress}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      uploadState.progress.step === 'error' 
-                        ? 'bg-red-500' 
-                        : uploadState.progress.step === 'completed'
+                    className={`h-2 rounded-full transition-all duration-300 ${uploadState.step === 'error'
+                      ? 'bg-red-500'
+                      : uploadState.step === 'completed'
                         ? 'bg-green-500'
                         : 'bg-blue-500'
-                    }`}
-                    style={{ width: `${uploadState.progress.progress}%` }}
+                      }`}
+                    style={{ width: `${uploadState.progress}%` }}
                   ></div>
                 </div>
               </div>
@@ -275,14 +272,14 @@ export default function MovieUpload() {
                 </div>
               </div>
 
-              {uploadState.progress.error && (
+              {uploadState.error && (
                 <div className="bg-red-900/20 border border-red-600/30 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-red-400">
                     <AlertCircle className="w-4 h-4" />
                     <span className="font-medium">Lỗi upload</span>
                   </div>
-                  <p className="text-red-300 text-sm mt-1">{uploadState.progress.error}</p>
-                  {uploadState.progress.error.includes('CORS') && (
+                  <p className="text-red-300 text-sm mt-1">{uploadState.error}</p>
+                  {uploadState.error.includes('CORS') && (
                     <div className="mt-3 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded">
                       <p className="text-yellow-300 text-sm">
                         <strong>Giải pháp:</strong> Server cần cấu hình CORS headers cho Azure Blob Storage:
@@ -297,7 +294,7 @@ export default function MovieUpload() {
                 </div>
               )}
 
-              {uploadState.progress.step === 'completed' && (
+              {uploadState.step === 'completed' && (
                 <div className="bg-green-900/20 border border-green-600/30 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-green-400">
                     <CheckCircle className="w-4 h-4" />

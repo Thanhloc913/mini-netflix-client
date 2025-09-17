@@ -1,10 +1,10 @@
 import axios from "axios";
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from "axios";
 import { useAuthStore } from "@/store/auth";
-import { refreshToken } from "@/apis/auth";
+import { refreshTokens } from "@/apis/auth";
 import type { TokenPair } from "@/types/auth";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 let isRefreshing = false;
 let refreshPromise: Promise<TokenPair> | null = null;
@@ -70,7 +70,7 @@ async function getOrRefreshTokens(): Promise<TokenPair> {
     isRefreshing = true;
     refreshPromise = (async () => {
       try {
-        const tokens = await refreshToken(currentRefreshToken);
+        const tokens = await refreshTokens(currentRefreshToken);
         setTokens(tokens);
         return tokens;
       } finally {
