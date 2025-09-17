@@ -10,7 +10,7 @@ import {
 } from '@/apis/auth';
 import { useAuthStore } from '@/store/auth';
 import { queryKeys } from '@/lib/query-keys';
-import type { LoginRequest, RegisterRequest, Account } from '@/types/auth';
+import type { RegisterRequest, Account } from '@/types/auth';
 import { getCurrentUser } from '@/apis/auth';
 
 // Login mutation
