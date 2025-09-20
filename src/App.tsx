@@ -13,6 +13,8 @@ import ProfileManagement from "./pages/admin/ProfileManagement";
 import CreateAccount from "./pages/admin/CreateAccount";
 import MovieUpload from "./pages/admin/MovieUpload";
 import MovieManagement from "./pages/admin/MovieManagement";
+import GenreManagement from "./pages/admin/GenreManagement";
+import CastManagement from "./pages/admin/CastManagement";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 import { AuthProvider } from "./providers/AuthProvider";
 import { QueryProvider } from "./providers/QueryProvider";
@@ -132,6 +134,26 @@ export default function AppRouter() {
             <ProtectedRoute requireAdmin={true}>
               <AdminLayout>
                 <MovieUpload />
+              </AdminLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/genres" 
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout>
+                <GenreManagement />
+              </AdminLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/casts" 
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout>
+                <CastManagement />
               </AdminLayout>
             </ProtectedRoute>
           } 

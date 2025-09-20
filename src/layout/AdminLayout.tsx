@@ -10,7 +10,9 @@ import {
   Menu, 
   X,
   Home,
-  Film
+  Film,
+  Tags,
+  UserCircle
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -27,6 +29,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Quản lý tài khoản", href: "/admin/accounts", icon: Users },
     { name: "Quản lý hồ sơ", href: "/admin/profiles", icon: UserCheck },
     { name: "Quản lý phim", href: "/admin/movies", icon: Film },
+    { name: "Quản lý thể loại", href: "/admin/genres", icon: Tags },
+    { name: "Quản lý diễn viên", href: "/admin/casts", icon: UserCircle },
   ];
 
   const isActive = (href: string) => {
