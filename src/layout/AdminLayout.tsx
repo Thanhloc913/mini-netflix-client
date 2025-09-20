@@ -10,7 +10,9 @@ import {
   Menu, 
   X,
   Home,
-  Film
+  Film,
+  Tags,
+  UserCircle
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -27,6 +29,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Quản lý tài khoản", href: "/admin/accounts", icon: Users },
     { name: "Quản lý hồ sơ", href: "/admin/profiles", icon: UserCheck },
     { name: "Quản lý phim", href: "/admin/movies", icon: Film },
+    { name: "Quản lý thể loại", href: "/admin/genres", icon: Tags },
+    { name: "Quản lý diễn viên", href: "/admin/casts", icon: UserCircle },
   ];
 
   const isActive = (href: string) => {
@@ -37,10 +41,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex">
+    <div className="min-h-screen flex">
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
+      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-neutral-900 text-neutral-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col h-screen lg:w-64 md:w-56 sm:w-48`}>
+        {/* Header */}
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700 flex-shrink-0">
           <h1 className="text-xl font-bold text-white">
             Admin <span className="text-red-600">Panel</span>
           </h1>
@@ -52,7 +57,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </button>
         </div>
 
-        <nav className="mt-8 px-4">
+        {/* Navigation - scrollable */}
+        <nav className="flex-1 overflow-y-auto px-4 py-4">
           <ul className="space-y-2">
             {navigation.map((item) => {
               const Icon = item.icon;
@@ -66,8 +72,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         : "text-gray-300 hover:bg-gray-700 hover:text-white"
                     }`}
                   >
-                    <Icon className="h-5 w-5 mr-3" />
-                    {item.name}
+                    <Icon className="h-5 w-5 mr-3 flex-shrink-0" />
+                    <span className="truncate">{item.name}</span>
                   </Link>
                 </li>
               );
@@ -75,21 +81,21 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </ul>
         </nav>
 
-        {/* User info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+        {/* User info - fixed at bottom */}
+        <div className="flex-shrink-0 p-4 border-t border-gray-700">
           <div className="flex items-center mb-3">
-            <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+            <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
               {user?.profile.name?.charAt(0).toUpperCase() || "A"}
             </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-white">{user?.profile.name}</p>
+            <div className="ml-3 min-w-0 flex-1">
+              <p className="text-sm font-medium text-white truncate">{user?.profile.name}</p>
               <p className="text-xs text-gray-400">Administrator</p>
             </div>
           </div>
           <div className="flex gap-2">
             <Link to="/profile" className="flex-1">
-              <Button variant="outline" size="sm" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700">
-                <Settings className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700 text-xs">
+                <Settings className="h-3 w-3 mr-1" />
                 Cài đặt
               </Button>
             </Link>
@@ -97,32 +103,32 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               variant="outline" 
               size="sm" 
               onClick={logout}
-              className="border-gray-600 text-gray-300 hover:bg-gray-700"
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 px-2"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-3 w-3" />
             </Button>
           </div>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar */}
-        <header className="bg-gray-800 border-b border-gray-700 lg:hidden">
-          <div className="flex items-center justify-between h-16 px-4">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        {/* Top bar - Always visible on mobile */}
+        <header className="bg-neutral-900 border border-neutral-800 lg:hidden flex-shrink-0">
+          <div className="flex items-center justify-between h-14 px-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="text-gray-400 hover:text-white"
+              className="text-gray-400 hover:text-white p-2"
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             </button>
-            <h1 className="text-lg font-semibold text-white">Admin Panel</h1>
-            <div className="w-6"></div>
+            <h1 className="text-base font-semibold text-white truncate">Admin Panel</h1>
+            <div className="w-9"></div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900">
+        <main className="flex-1 overflow-hidden bg-neutral-950 text-neutral-100">
           {children}
         </main>
       </div>

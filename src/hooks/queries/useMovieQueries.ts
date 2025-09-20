@@ -7,8 +7,11 @@ export function useMovies(page: number = 1, limit: number = 20) {
   return useQuery({
     queryKey: queryKeys.movies.list(page, limit),
     queryFn: () => moviesApi.getAllMovies(page, limit),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh for 5 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache for 30 minutes
+    placeholderData: (previousData) => previousData, // Keep previous page data while loading new page
+    retry: 2, // Retry failed requests 2 times
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
   });
 }
 

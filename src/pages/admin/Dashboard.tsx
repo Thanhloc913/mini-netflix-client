@@ -109,7 +109,7 @@ export default function AdminDashboard() {
             <Link
               key={card.title}
               to={card.href}
-              className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors"
+              className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 hover:bg-gray-750 transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
               <Link
                 key={action.title}
                 to={action.href}
-                className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors group"
+                className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 hover:bg-gray-750 transition-colors group"
               >
                 <div className="flex items-start">
                   <div className={`${action.color} p-3 rounded-lg transition-colors`}>
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
         <h2 className="text-xl font-semibold text-white mb-4">Hoạt động gần đây</h2>
         <div className="space-y-4">
           <div className="flex items-center justify-between py-3 border-b border-gray-700">

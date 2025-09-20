@@ -106,7 +106,7 @@ export default function ProfileManagement() {
       )}
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-4 mb-6">
+      <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
@@ -115,11 +115,11 @@ export default function ProfileManagement() {
                 placeholder="Tìm kiếm theo tên, ID hồ sơ hoặc ID tài khoản..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-700 border-gray-600 text-white"
+                className="pl-10 bg-neutral-900 border border-neutral-800 text-white"
               />
             </div>
           </div>
-          <Button variant="outline" className="border-gray-600 text-gray-300">
+          <Button variant="outline" className="border-neutral-800 text-gray-300">
             <Filter className="h-4 w-4 mr-2" />
             Lọc
           </Button>
@@ -129,7 +129,7 @@ export default function ProfileManagement() {
       {/* Profiles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredProfiles.map((profile) => (
-          <div key={profile.id} className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors">
+          <div key={profile.id} className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 hover:bg-gray-750 transition-colors">
             {/* Avatar */}
             <div className="flex justify-center mb-4">
               <div className="w-20 h-20 rounded-full bg-red-600 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
