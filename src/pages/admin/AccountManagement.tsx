@@ -51,25 +51,69 @@ export default function AccountManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-900 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white">Quản lý tài khoản</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-3xl font-bold text-white mb-2">Quản lý tài khoản</h1>
+          <p className="text-gray-400">
             Quản lý tài khoản người dùng trong hệ thống
           </p>
         </div>
         <Link to="/admin/accounts/create">
-          <Button className="bg-red-600 hover:bg-red-700">
-            <Plus className="w-4 h-4 mr-2" />
+          <Button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg flex items-center gap-2">
+            <Plus className="w-4 h-4" />
             Tạo tài khoản
           </Button>
         </Link>
       </div>
 
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Tổng tài khoản</p>
+              <p className="text-2xl font-bold text-white">{accounts.length}</p>
+            </div>
+            <User className="w-8 h-8 text-blue-500" />
+          </div>
+        </div>
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Người dùng</p>
+              <p className="text-2xl font-bold text-white">
+                {accounts.filter(acc => acc.role === 'USER').length}
+              </p>
+            </div>
+            <User className="w-8 h-8 text-green-500" />
+          </div>
+        </div>
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Quản trị viên</p>
+              <p className="text-2xl font-bold text-white">
+                {accounts.filter(acc => acc.role === 'ADMIN').length}
+              </p>
+            </div>
+            <Shield className="w-8 h-8 text-purple-500" />
+          </div>
+        </div>
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Kết quả tìm kiếm</p>
+              <p className="text-2xl font-bold text-white">{filteredAccounts.length}</p>
+            </div>
+            <Search className="w-8 h-8 text-orange-500" />
+          </div>
+        </div>
+      </div>
+
       {/* Filters */}
-      <div className="bg-gray-800 rounded-lg p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
@@ -108,7 +152,7 @@ export default function AccountManagement() {
       )}
 
       {/* Accounts Table */}
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-700">

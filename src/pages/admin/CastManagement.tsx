@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Search, UserCircle, Calendar, Users, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCasts } from "@/hooks/queries/useCastQueries";
@@ -39,7 +39,7 @@ export default function CastManagement() {
         name: formData.name.trim(),
         role: formData.role.trim()
       };
-      
+
       await createCastMutation.mutateAsync(castData);
       setIsCreateModalOpen(false);
       setFormData({ name: "", role: "" });
@@ -57,7 +57,7 @@ export default function CastManagement() {
         name: formData.name.trim(),
         role: formData.role.trim()
       };
-      
+
       await updateCastMutation.mutateAsync({
         id: editingCast.id,
         data: updateData
@@ -93,144 +93,173 @@ export default function CastManagement() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-red-400">Có lỗi xảy ra khi tải danh sách diễn viên</p>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Đang tải danh sách diễn viên...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-900 p-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">Quản lý diễn viên</h1>
-          <p className="text-neutral-400 mt-1">Quản lý diễn viên và đạo diễn trong hệ thống</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Quản lý diễn viên</h1>
+          <p className="text-gray-400">Quản lý diễn viên và đạo diễn trong hệ thống</p>
         </div>
         <Button
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-orange-600 hover:bg-orange-700 text-white"
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg flex items-center gap-2"
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="w-4 h-4" />
           Thêm diễn viên
         </Button>
       </div>
 
+      {error && (
+        <div className="mb-6 bg-red-900/20 border border-red-600/30 text-red-400 p-4 rounded-lg">
+          <p className="font-medium">Lỗi tải dữ liệu</p>
+          <p className="text-sm mt-1">Có lỗi xảy ra khi tải danh sách diễn viên</p>
+        </div>
+      )}
+
       {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-        <Input
-          placeholder="Tìm kiếm diễn viên..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 bg-neutral-800 border-neutral-700 text-white"
-        />
+      <div className="mb-6">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Tìm kiếm diễn viên..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 bg-gray-800 border-gray-700 text-white"
+          />
+        </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-neutral-800 rounded-lg p-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-neutral-400">Tổng diễn viên</p>
+              <p className="text-gray-400 text-sm">Tổng diễn viên</p>
               <p className="text-2xl font-bold text-white">{casts.length}</p>
             </div>
+            <Users className="w-8 h-8 text-blue-500" />
           </div>
         </div>
-        <div className="bg-neutral-800 rounded-lg p-4">
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-neutral-400">Diễn viên</p>
+              <p className="text-gray-400 text-sm">Diễn viên</p>
               <p className="text-2xl font-bold text-white">
                 {casts.filter(cast => cast.role.toLowerCase().includes('actor')).length}
               </p>
             </div>
+            <UserCircle className="w-8 h-8 text-green-500" />
           </div>
         </div>
-        <div className="bg-neutral-800 rounded-lg p-4">
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-neutral-400">Đạo diễn</p>
+              <p className="text-gray-400 text-sm">Đạo diễn</p>
               <p className="text-2xl font-bold text-white">
                 {casts.filter(cast => cast.role.toLowerCase().includes('director')).length}
               </p>
             </div>
+            <Star className="w-8 h-8 text-purple-500" />
+          </div>
+        </div>
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Kết quả tìm kiếm</p>
+              <p className="text-2xl font-bold text-white">{filteredCasts.length}</p>
+            </div>
+            <Search className="w-8 h-8 text-orange-500" />
           </div>
         </div>
       </div>
 
-      {/* Casts Table */}
-      <div className="bg-neutral-800 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-neutral-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">
-                  Tên
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">
-                  Vai trò
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">
-                  Ngày tạo
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">
-                  Thao tác
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-700">
+      {/* Casts List */}
+      <div className="bg-gray-800 border border-gray-700 rounded-lg">
+        <div className="p-6 border-b border-gray-700">
+          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <UserCircle className="w-5 h-5" />
+            Danh sách diễn viên ({filteredCasts.length})
+          </h2>
+        </div>
+        <div className="p-6">
+          {filteredCasts.length === 0 ? (
+            <div className="text-center py-12">
+              <UserCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-400 mb-2">
+                {searchTerm ? `Không tìm thấy diễn viên "${searchTerm}"` : "Chưa có diễn viên nào"}
+              </h3>
+              <p className="text-gray-500 mb-4">
+                {searchTerm ? "Thử tìm kiếm với từ khóa khác" : "Hãy thêm diễn viên đầu tiên"}
+              </p>
+              {!searchTerm && (
+                <Button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Thêm diễn viên ngay
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
               {filteredCasts.map((cast) => (
-                <tr key={cast.id} className="hover:bg-neutral-700/50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-white">{cast.name}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {cast.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-neutral-400">
-                      {new Date(cast.createdAt).toLocaleDateString('vi-VN')}
+                <div
+                  key={cast.id}
+                  className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors border border-gray-700/50"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <UserCircle className="w-6 h-6 text-white" />
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEditModal(cast)}
-                        className="text-blue-400 hover:text-blue-300 hover:bg-blue-400/10"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setDeletingCast(cast)}
-                        className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
 
-          {filteredCasts.length === 0 && (
-            <div className="text-center py-8 text-neutral-400">
-              {searchTerm ? `Không tìm thấy diễn viên nào với từ khóa "${searchTerm}"` : "Chưa có diễn viên nào"}
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-white mb-1">
+                        {cast.name}
+                      </h3>
+                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {new Date(cast.createdAt).toLocaleDateString('vi-VN')}
+                        </span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${cast.role.toLowerCase().includes('director')
+                          ? 'bg-purple-600/20 text-purple-400'
+                          : cast.role.toLowerCase().includes('actor')
+                            ? 'bg-green-600/20 text-green-400'
+                            : 'bg-blue-600/20 text-blue-400'
+                          }`}>
+                          {cast.role}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => openEditModal(cast)}
+                      className="p-2 border border-gray-600 text-gray-400 hover:bg-gray-600 rounded"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setDeletingCast(cast)}
+                      className="p-2 border border-red-600/50 text-red-400 hover:bg-red-600/10 rounded"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -239,15 +268,15 @@ export default function CastManagement() {
       {/* Create/Edit Modal */}
       {(isCreateModalOpen || editingCast) && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md">
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-white mb-4">
               {editingCast ? "Chỉnh sửa diễn viên" : "Thêm diễn viên mới"}
             </h2>
-            
+
             <form onSubmit={editingCast ? handleUpdateCast : handleCreateCast}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Tên *
                   </label>
                   <Input
@@ -255,13 +284,13 @@ export default function CastManagement() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Nhập tên diễn viên..."
-                    className="bg-neutral-700 border-neutral-600 text-white"
+                    className="bg-gray-700 border-gray-600 text-white"
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-neutral-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Vai trò *
                   </label>
                   <Input
@@ -269,7 +298,7 @@ export default function CastManagement() {
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                     placeholder="VD: Actor, Director, Producer..."
-                    className="bg-neutral-700 border-neutral-600 text-white"
+                    className="bg-gray-700 border-gray-600 text-white"
                     required
                   />
                 </div>
@@ -280,14 +309,14 @@ export default function CastManagement() {
                   type="button"
                   variant="ghost"
                   onClick={closeModals}
-                  className="text-neutral-400 hover:text-white"
+                  className="text-gray-400 hover:text-white border border-gray-600"
                 >
                   Hủy
                 </Button>
                 <Button
                   type="submit"
                   disabled={createCastMutation.isPending || updateCastMutation.isPending}
-                  className="bg-orange-600 hover:bg-orange-700 text-white"
+                  className="bg-red-600 hover:bg-red-700 text-white"
                 >
                   {createCastMutation.isPending || updateCastMutation.isPending ? (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
@@ -306,10 +335,10 @@ export default function CastManagement() {
         onClose={() => setDeletingCast(null)}
         onConfirm={handleDeleteCast}
         title="Xóa diễn viên"
-        description={`Bạn có chắc chắn muốn xóa diễn viên "${deletingCast?.name}"? Hành động này không thể hoàn tác.`}
+        message={`Bạn có chắc chắn muốn xóa diễn viên "${deletingCast?.name}"? Hành động này không thể hoàn tác.`}
         confirmText="Xóa"
         cancelText="Hủy"
-        isLoading={deleteCastMutation.isPending}
+        loading={deleteCastMutation.isPending}
       />
     </div>
   );
