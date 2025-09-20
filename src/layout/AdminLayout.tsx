@@ -41,9 +41,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex">
+    <div className="min-h-screen flex">
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col h-screen lg:w-64 md:w-56 sm:w-48`}>
+      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-neutral-900 text-neutral-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col h-screen lg:w-64 md:w-56 sm:w-48`}>
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700 flex-shrink-0">
           <h1 className="text-xl font-bold text-white">
@@ -114,7 +114,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top bar - Always visible on mobile */}
-        <header className="bg-gray-800 border-b border-gray-700 lg:hidden flex-shrink-0">
+        <header className="bg-neutral-900 border border-neutral-800 lg:hidden flex-shrink-0">
           <div className="flex items-center justify-between h-14 px-4">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -128,7 +128,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-hidden bg-gray-900">
+        <main className="flex-1 overflow-hidden bg-neutral-950 text-neutral-100">
           {children}
         </main>
       </div>

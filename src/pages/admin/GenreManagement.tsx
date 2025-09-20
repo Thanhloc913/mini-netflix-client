@@ -99,7 +99,7 @@ export default function GenreManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
+    <div className="min-h-screen bg-neutral-950 p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -130,23 +130,23 @@ export default function GenreManagement() {
             placeholder="Tìm kiếm thể loại..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-gray-800 border-gray-700 text-white"
+            className="pl-10 bg-neutral-900 border border-neutral-800 text-white"
           />
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Tổng thể loại</p>
               <p className="text-2xl font-bold text-white">{genres.length}</p>
             </div>
-            <Tags className="w-8 h-8 text-blue-500" />
+            <Tags className="w-8 h-8 text-gray-400" />
           </div>
         </div>
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Kết quả tìm kiếm</p>
@@ -155,7 +155,7 @@ export default function GenreManagement() {
             <Search className="w-8 h-8 text-green-500" />
           </div>
         </div>
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Thể loại phổ biến</p>
@@ -167,7 +167,7 @@ export default function GenreManagement() {
       </div>
 
       {/* Genres List */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg">
+      <div className="bg-neutral-900 border border-neutral-800 rounded-lg">
         <div className="p-6 border-b border-gray-700">
           <h2 className="text-xl font-semibold text-white flex items-center gap-2">
             <Tags className="w-5 h-5" />
@@ -246,7 +246,7 @@ export default function GenreManagement() {
       {/* Create/Edit Modal */}
       {(isCreateModalOpen || editingGenre) && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-full max-w-md">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-white mb-4">
               {editingGenre ? "Chỉnh sửa thể loại" : "Thêm thể loại mới"}
             </h2>

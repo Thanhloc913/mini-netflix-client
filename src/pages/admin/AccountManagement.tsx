@@ -51,7 +51,7 @@ export default function AccountManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
+    <div className="min-h-screen bg-neutral-950 border border-neutral-800 p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -70,16 +70,16 @@ export default function AccountManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Tổng tài khoản</p>
               <p className="text-2xl font-bold text-white">{accounts.length}</p>
             </div>
-            <User className="w-8 h-8 text-blue-500" />
+            <User className="w-8 h-8 text-gray-400" />
           </div>
         </div>
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Người dùng</p>
@@ -90,7 +90,7 @@ export default function AccountManagement() {
             <User className="w-8 h-8 text-green-500" />
           </div>
         </div>
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Quản trị viên</p>
@@ -101,7 +101,7 @@ export default function AccountManagement() {
             <Shield className="w-8 h-8 text-purple-500" />
           </div>
         </div>
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Kết quả tìm kiếm</p>
@@ -113,7 +113,7 @@ export default function AccountManagement() {
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
+      <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6 mb-6">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
@@ -122,7 +122,7 @@ export default function AccountManagement() {
               placeholder="Tìm kiếm theo email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-gray-700 border-gray-600 text-white"
+              className="pl-10 bg-neutral-900 border border-neutral-800 text-white"
             />
           </div>
 
@@ -132,7 +132,7 @@ export default function AccountManagement() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value as "ALL" | "USER" | "ADMIN")}
-              className="bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white"
+              className="bg-neutral-900 border border-neutral-800 rounded-md px-3 py-2 text-white"
             >
               <option value="ALL">Tất cả vai trò</option>
               <option value="USER">Người dùng</option>
@@ -152,10 +152,10 @@ export default function AccountManagement() {
       )}
 
       {/* Accounts Table */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+      <div className="bg-neutral-900 border border-neutral-800 rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-700">
+            <thead className="bg-neutral-900 border border-neutral-800">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Tài khoản

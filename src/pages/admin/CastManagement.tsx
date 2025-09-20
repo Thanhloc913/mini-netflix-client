@@ -103,7 +103,7 @@ export default function CastManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
+    <div className="min-h-screen bg-neutral-950 border border-neutral-800 p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -134,23 +134,23 @@ export default function CastManagement() {
             placeholder="Tìm kiếm diễn viên..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-gray-800 border-gray-700 text-white"
+            className="pl-10 bg-neutral-900 border border-neutral-800 text-white"
           />
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Tổng diễn viên</p>
               <p className="text-2xl font-bold text-white">{casts.length}</p>
             </div>
-            <Users className="w-8 h-8 text-blue-500" />
+            <Users className="w-8 h-8 text-gray-400" />
           </div>
         </div>
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Diễn viên</p>
@@ -158,10 +158,10 @@ export default function CastManagement() {
                 {casts.filter(cast => cast.role.toLowerCase().includes('actor')).length}
               </p>
             </div>
-            <UserCircle className="w-8 h-8 text-green-500" />
+            <UserCircle className="w-8 h-8 text-gray-400" />
           </div>
         </div>
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Đạo diễn</p>
@@ -172,7 +172,7 @@ export default function CastManagement() {
             <Star className="w-8 h-8 text-purple-500" />
           </div>
         </div>
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Kết quả tìm kiếm</p>
@@ -184,7 +184,7 @@ export default function CastManagement() {
       </div>
 
       {/* Casts List */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg">
+      <div className="bg-neutral-900 border border-neutral-800 rounded-lg">
         <div className="p-6 border-b border-gray-700">
           <h2 className="text-xl font-semibold text-white flex items-center gap-2">
             <UserCircle className="w-5 h-5" />
@@ -268,7 +268,7 @@ export default function CastManagement() {
       {/* Create/Edit Modal */}
       {(isCreateModalOpen || editingCast) && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-full max-w-md">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-white mb-4">
               {editingCast ? "Chỉnh sửa diễn viên" : "Thêm diễn viên mới"}
             </h2>

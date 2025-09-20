@@ -68,7 +68,7 @@ export default function MovieManagement() {
   }
 
   return (
-    <div className="h-screen bg-gray-900 flex flex-col">
+    <div className="h-screen flex flex-col">
       {/* Fixed Header */}
       <div className="flex-shrink-0 p-4 lg:p-6 pb-0">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 lg:mb-6 gap-4">
@@ -100,7 +100,7 @@ export default function MovieManagement() {
 
         {/* Fixed Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-4 lg:mb-6">
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-3 lg:p-6">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-3 lg:p-6">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-gray-400 text-xs lg:text-sm">Tổng phim</p>
@@ -110,7 +110,7 @@ export default function MovieManagement() {
             </div>
           </div>
 
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-3 lg:p-6">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-3 lg:p-6">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-gray-400 text-xs lg:text-sm">Phim bộ</p>
@@ -122,7 +122,7 @@ export default function MovieManagement() {
             </div>
           </div>
 
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-3 lg:p-6">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-3 lg:p-6">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-gray-400 text-xs lg:text-sm">Phim lẻ</p>
@@ -134,7 +134,7 @@ export default function MovieManagement() {
             </div>
           </div>
 
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-3 lg:p-6">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-3 lg:p-6">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-gray-400 text-xs lg:text-sm">Trang</p>
@@ -148,7 +148,7 @@ export default function MovieManagement() {
 
       {/* Scrollable Movies List */}
       <div className="flex-1 px-4 lg:px-6 pb-4 lg:pb-6 overflow-hidden">
-        <div className="bg-gray-800 border border-gray-700 rounded-lg h-full flex flex-col">
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg h-full flex flex-col">
           <div className="flex-shrink-0 p-3 lg:p-6 border-b border-gray-700">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <h2 className="text-base lg:text-xl font-semibold text-white flex items-center gap-2 min-w-0">
