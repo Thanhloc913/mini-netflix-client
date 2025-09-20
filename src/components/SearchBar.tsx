@@ -18,7 +18,8 @@ export function SearchBar({ onMoviePlay }: SearchBarProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const debouncedQuery = useDebounce(query, 500);
-  const { data: results = [], isLoading: loading } = useMovieSearch(debouncedQuery);
+  const { data: searchResponse, isLoading: loading } = useMovieSearch(debouncedQuery);
+  const results = searchResponse?.movies || [];
 
   // Focus input khi expand
   useEffect(() => {
@@ -128,7 +129,7 @@ export function SearchBar({ onMoviePlay }: SearchBarProps) {
             {!loading && results.length > 0 && (
               <div className="p-4">
                 <p className="text-sm text-neutral-400 mb-4">
-                  Tìm thấy {results.length} kết quả
+                  Tìm thấy {searchResponse?.total || results.length} kết quả
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {results.slice(0, 8).map((movie) => (
@@ -150,7 +151,7 @@ export function SearchBar({ onMoviePlay }: SearchBarProps) {
                       size="sm"
                       className="border-neutral-600 text-neutral-300 hover:bg-neutral-700"
                     >
-                      Xem thêm {results.length - 8} kết quả
+                      Xem thêm {(searchResponse?.total || results.length) - 8} kết quả
                     </Button>
                   </div>
                 )}

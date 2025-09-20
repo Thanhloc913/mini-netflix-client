@@ -264,22 +264,87 @@ export const moviesApi = {
   },
 
   // Search movies
-  searchMovies: async (query: string): Promise<Movie[]> => {
+  searchMovies: async (
+    query: string,
+    page = 1,
+    limit = 20
+  ): Promise<MoviesResponse> => {
     try {
-      if (!query.trim()) return [];
+      if (!query.trim()) {
+        return { movies: [], total: 0, page, limit };
+      }
 
-      const response = await moviesApi.getAllMovies(1, 50);
-      const lowercaseQuery = query.toLowerCase();
+      console.log("🔍 Searching movies from API...");
+      const response = await apiClient.get("/movie/movies/search", {
+        params: { keyword: query, page, limit }
+      });
 
-      return response.movies.filter(movie =>
-        movie.title.toLowerCase().includes(lowercaseQuery) ||
-        movie.description.toLowerCase().includes(lowercaseQuery)
-      );
-    } catch (error) {
-      console.error("Failed to search movies:", error);
-      return [];
+      console.log("✅ Search API response:", response.data);
+
+      // Xử lý response structure từ API search
+      if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        console.log("📦 Search found", response.data.data.length, "movies");
+        return {
+          movies: response.data.data,
+          total: response.data.meta?.total || response.data.data.length,
+          page: response.data.meta?.page || page,
+          limit: response.data.meta?.limit || limit,
+        };
+      } else if (Array.isArray(response.data)) {
+        // Fallback nếu response trả về array trực tiếp
+        console.log("📦 Search response is array, found", response.data.length, "movies");
+        return {
+          movies: response.data,
+          total: response.data.length,
+          page,
+          limit,
+        };
+      } else {
+        console.error("❌ Unexpected search response structure:", response.data);
+        return { movies: [], total: 0, page, limit };
+      }
+    } catch (error: any) {
+      console.error("❌ Search API failed:", error);
+
+      // Fallback với mock data nếu có lỗi server
+      if (error.code === 'ECONNREFUSED' || error.response?.status >= 500) {
+        console.log("🔄 Using mock search fallback");
+        const mockMovies: Movie[] = [
+          {
+            id: "mock-search-1",
+            title: "Gachakuza",
+            description: "Bị buộc tội giết người và nằm xuống hố, đứa trẻ mồ côi nọ gặp nhóm chiến binh quái vật có sức mạnh đặc biệt để khám phá sự thật.",
+            releaseDate: "2024-01-01",
+            duration: 24,
+            isSeries: true,
+            posterUrl: "https://gachiakuta-anime.com/assets/img/top/main/kv.jpg",
+            trailerUrl: null,
+            videoAssets: [],
+            rating: "8.7",
+            createdAt: "2024-01-01",
+            updatedAt: "2024-01-01",
+            deletedAt: null,
+            episodes: [],
+            genres: [{ name: "Action" }, { name: "Fantasy" }],
+            casts: []
+          }
+        ].filter(movie =>
+          movie.title.toLowerCase().includes(query.toLowerCase()) ||
+          movie.description.toLowerCase().includes(query.toLowerCase())
+        );
+
+        return {
+          movies: mockMovies,
+          total: mockMovies.length,
+          page,
+          limit
+        };
+      }
+
+      return { movies: [], total: 0, page, limit };
     }
   },
+
 
   // Get trending movies (latest movies)
   getTrendingMovies: async (): Promise<Movie[]> => {
