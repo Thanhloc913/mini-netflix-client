@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-900 flex">
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col h-screen`}>
+      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col h-screen lg:w-64 md:w-56 sm:w-48`}>
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700 flex-shrink-0">
           <h1 className="text-xl font-bold text-white">
@@ -112,23 +112,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar */}
-        <header className="bg-gray-800 border-b border-gray-700 lg:hidden">
-          <div className="flex items-center justify-between h-16 px-4">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        {/* Top bar - Always visible on mobile */}
+        <header className="bg-gray-800 border-b border-gray-700 lg:hidden flex-shrink-0">
+          <div className="flex items-center justify-between h-14 px-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="text-gray-400 hover:text-white"
+              className="text-gray-400 hover:text-white p-2"
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             </button>
-            <h1 className="text-lg font-semibold text-white">Admin Panel</h1>
-            <div className="w-6"></div>
+            <h1 className="text-base font-semibold text-white truncate">Admin Panel</h1>
+            <div className="w-9"></div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900">
+        <main className="flex-1 overflow-hidden bg-gray-900">
           {children}
         </main>
       </div>
