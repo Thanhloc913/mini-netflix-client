@@ -1,9 +1,10 @@
 import { useMemo } from "react";
-import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAccounts, useProfiles } from "@/hooks/queries/useAuthQueries";
 import { useMovies } from "@/hooks/queries/useMovieQueries";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import StatCard from "@/components/admin/StatCard";
+import ActionCard from "@/components/admin/ActionCard";
 import { Users, UserCheck, Film, TrendingUp, Eye, Plus, Upload } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -103,56 +104,32 @@ export default function AdminDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {statCards.map((card) => {
-          const Icon = card.icon;
-          return (
-            <Link
-              key={card.title}
-              to={card.href}
-              className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 hover:bg-gray-750 transition-colors"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm font-medium">{card.title}</p>
-                  <p className="text-3xl font-bold text-white mt-2">{card.value}</p>
-                </div>
-                <div className={`${card.color} p-3 rounded-lg`}>
-                  <Icon className="h-6 w-6 text-white" />
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+        {statCards.map((card) => (
+          <StatCard
+            key={card.title}
+            title={card.title}
+            value={card.value}
+            icon={card.icon}
+            color={card.color}
+            href={card.href}
+          />
+        ))}
       </div>
 
       {/* Quick Actions */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-white mb-4">Thao tác nhanh</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {quickActions.map((action) => {
-            const Icon = action.icon;
-            return (
-              <Link
-                key={action.title}
-                to={action.href}
-                className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 hover:bg-gray-750 transition-colors group"
-              >
-                <div className="flex items-start">
-                  <div className={`${action.color} p-3 rounded-lg transition-colors`}>
-                    <Icon className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-semibold text-white group-hover:text-gray-100">
-                      {action.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm mt-1">
-                      {action.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+          {quickActions.map((action) => (
+            <ActionCard
+              key={action.title}
+              title={action.title}
+              description={action.description}
+              icon={action.icon}
+              href={action.href}
+              color={action.color}
+            />
+          ))}
         </div>
       </div>
 

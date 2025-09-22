@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useCasts } from "@/hooks/queries/useCastQueries";
 import { useCreateCast, useUpdateCast, useDeleteCast } from "@/hooks/mutations/useCastMutations";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import StatCard from "@/components/admin/StatCard";
 import type { Cast, CreateCastRequest, UpdateCastRequest } from "@/types/cast";
 
 interface CastFormData {
@@ -103,7 +104,7 @@ export default function CastManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 border border-neutral-800 p-6">
+    <div className="min-h-screen bg-neutral-950 p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -141,46 +142,30 @@ export default function CastManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Tổng diễn viên</p>
-              <p className="text-2xl font-bold text-white">{casts.length}</p>
-            </div>
-            <Users className="w-8 h-8 text-gray-400" />
-          </div>
-        </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Diễn viên</p>
-              <p className="text-2xl font-bold text-white">
-                {casts.filter(cast => cast.role.toLowerCase().includes('actor')).length}
-              </p>
-            </div>
-            <UserCircle className="w-8 h-8 text-gray-400" />
-          </div>
-        </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Đạo diễn</p>
-              <p className="text-2xl font-bold text-white">
-                {casts.filter(cast => cast.role.toLowerCase().includes('director')).length}
-              </p>
-            </div>
-            <Star className="w-8 h-8 text-purple-500" />
-          </div>
-        </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Kết quả tìm kiếm</p>
-              <p className="text-2xl font-bold text-white">{filteredCasts.length}</p>
-            </div>
-            <Search className="w-8 h-8 text-orange-500" />
-          </div>
-        </div>
+        <StatCard
+          title="Tổng diễn viên"
+          value={casts.length}
+          icon={Users}
+          color="bg-blue-600"
+        />
+        <StatCard
+          title="Diễn viên"
+          value={casts.filter(cast => cast.role.toLowerCase().includes('actor')).length}
+          icon={UserCircle}
+          color="bg-green-600"
+        />
+        <StatCard
+          title="Đạo diễn"
+          value={casts.filter(cast => cast.role.toLowerCase().includes('director')).length}
+          icon={Star}
+          color="bg-purple-600"
+        />
+        <StatCard
+          title="Kết quả tìm kiếm"
+          value={filteredCasts.length}
+          icon={Search}
+          color="bg-orange-600"
+        />
       </div>
 
       {/* Casts List */}

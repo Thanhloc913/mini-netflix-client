@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useGenres } from "@/hooks/queries/useGenreQueries";
 import { useCreateGenre, useUpdateGenre, useDeleteGenre } from "@/hooks/mutations/useGenreMutations";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import StatCard from "@/components/admin/StatCard";
 import type { Genre, CreateGenreRequest, UpdateGenreRequest } from "@/types/genre";
 
 interface GenreFormData {
@@ -137,33 +138,24 @@ export default function GenreManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Tổng thể loại</p>
-              <p className="text-2xl font-bold text-white">{genres.length}</p>
-            </div>
-            <Tags className="w-8 h-8 text-gray-400" />
-          </div>
-        </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Kết quả tìm kiếm</p>
-              <p className="text-2xl font-bold text-white">{filteredGenres.length}</p>
-            </div>
-            <Search className="w-8 h-8 text-green-500" />
-          </div>
-        </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Thể loại phổ biến</p>
-              <p className="text-2xl font-bold text-white">{Math.min(genres.length, 10)}</p>
-            </div>
-            <Hash className="w-8 h-8 text-purple-500" />
-          </div>
-        </div>
+        <StatCard
+          title="Tổng thể loại"
+          value={genres.length}
+          icon={Tags}
+          color="bg-blue-600"
+        />
+        <StatCard
+          title="Kết quả tìm kiếm"
+          value={filteredGenres.length}
+          icon={Search}
+          color="bg-green-600"
+        />
+        <StatCard
+          title="Thể loại phổ biến"
+          value={Math.min(genres.length, 10)}
+          icon={Hash}
+          color="bg-purple-600"
+        />
       </div>
 
       {/* Genres List */}
