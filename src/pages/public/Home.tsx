@@ -102,7 +102,7 @@ export default function Home() {
                                 {movieCategories.map((category, index) => (
                                     <div
                                         key={category.id}
-                                        className="opacity-0 translate-y-3 animate-fade-in-up"
+                                        className="opacity-0 animate-fade-in"
                                         style={{
                                             animationDelay: `${index * 0.1}s`,
                                             animationFillMode: 'forwards'

@@ -6,7 +6,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-neutral-950 text-neutral-100 overflow-x-hidden antialiased">
+    <div className="flex min-h-screen w-full flex-col bg-neutral-950 text-neutral-100 overflow-x-hidden overflow-y-visible antialiased">
       <Navbar />
       <main className="flex-1 pt-16 w-full">
         <div className="w-full">

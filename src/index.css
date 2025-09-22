@@ -101,6 +101,13 @@
     transition: opacity 0.3s ease-in, transform 0.3s ease-in;
   }
 
+  /* Movie card hover effect */
+  .movie-card-hover {
+    position: relative;
+    z-index: 50;
+    transform: scale(1.05);
+  }
+
   /* Movie card expanding animation */
   .movie-card-expanding {
     animation: expandToFullscreen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
