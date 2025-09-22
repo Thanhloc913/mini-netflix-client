@@ -213,22 +213,22 @@ export const moviesApi = {
         {
           id: "latest",
           name: "Mới nhất",
-          movies: movies.slice(0, 6)
+          movies: movies.slice(0, 10)
         },
         {
           id: "series",
           name: "Phim bộ",
-          movies: movies.filter(movie => movie.isSeries).slice(0, 6)
+          movies: movies.filter(movie => movie.isSeries).slice(0, 10)
         },
         {
           id: "movies",
           name: "Phim lẻ",
-          movies: movies.filter(movie => !movie.isSeries).slice(0, 6)
+          movies: movies.filter(movie => !movie.isSeries).slice(0, 10)
         },
         {
           id: "high-rated",
           name: "Đánh giá cao",
-          movies: movies.filter(movie => parseFloat(movie.rating) >= 8).slice(0, 6)
+          movies: movies.filter(movie => parseFloat(movie.rating) >= 8).slice(0, 10)
         }
       ];
 
