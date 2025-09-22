@@ -14,10 +14,23 @@ export default function Home() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                    <div className="text-white text-xl">Đang tải anime...</div>
+                    <div className="relative mb-8">
+                        <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-500/20 border-t-orange-500 mx-auto"></div>
+                        <div className="absolute inset-0 rounded-full h-16 w-16 border-4 border-orange-300/10 border-r-orange-300 animate-spin mx-auto" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="text-white text-xl font-semibold">Đang tải anime...</div>
+                        <div className="text-gray-400 text-sm">Chuẩn bị những bộ phim tuyệt vời cho bạn</div>
+                    </div>
+
+                    {/* Loading dots animation */}
+                    <div className="flex justify-center gap-1 mt-6">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-orange-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
                 </div>
             </div>
         );
@@ -25,55 +38,102 @@ export default function Home() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="text-red-500 text-xl mb-4">Lỗi: {error.message || 'Có lỗi xảy ra'}</div>
+            <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex items-center justify-center">
+                <div className="text-center max-w-md mx-auto px-6">
+                    <div className="mb-8">
+                        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-semibold text-white mb-2">Oops! Có lỗi xảy ra</h3>
+                        <p className="text-gray-400 text-sm mb-6">
+                            {error.message || 'Không thể tải dữ liệu anime. Vui lòng thử lại sau.'}
+                        </p>
+                    </div>
+
                     <button
                         onClick={() => refetch()}
-                        className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded"
+                        className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-lg shadow-orange-500/25"
                     >
                         Thử lại
                     </button>
+
+                    <div className="mt-6 text-xs text-gray-500">
+                        Nếu vấn đề vẫn tiếp tục, vui lòng liên hệ hỗ trợ
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen">
-            {/* Hero Section - Always show if we have movies */}
-            <HeroSection movies={featuredMovies} onPlay={handleMoviePlay} />
+        <div className="min-h-screen bg-black">
+            {/* Hero Section với gradient overlay liền mạch */}
+            <div className="relative">
+                <HeroSection movies={featuredMovies} onPlay={handleMoviePlay} />
 
-            {/* Gradient Transition */}
-            <div className="h-32 bg-gradient-to-b from-black via-gray-800 to-gray-900"></div>
+                {/* Gradient overlay từ từ xuống - giống Ninoyo */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/90 to-transparent pointer-events-none z-10"></div>
+            </div>
 
-            {/* Movie Categories */}
-            <div className="bg-gray-900 px-6 md:px-12 py-8 space-y-8">
-                {/* Featured section header */}
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                        Những anime mới và đang phát hành tại đây!
-                    </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Khám phá thế giới anime đa dạng với những bộ phim mới nhất và hot nhất
-                    </p>
+            {/* Content section - liền mạch không có gap */}
+            <div className="relative -mt-16 pt-16 bg-black">
+                {/* Featured Movies Section Header */}
+                <div className="px-6 md:px-12 pt-2 pb-4">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-left">
+                            <h2 className="text-xl md:text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                                <span className="w-1 h-6 bg-orange-500 rounded-full"></span>
+                                Mới Phát Hành
+                            </h2>
+                            <p className="text-gray-400 text-sm">
+                                Những anime mới và đang phát hành tại đây!
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                {movieCategories.length > 0 ? (
-                    movieCategories.map((category) => (
-                        <div key={category.id} className="mb-10">
-                            <MovieRow
-                                title={category.name}
-                                movies={category.movies}
-                                onMoviePlay={handleMoviePlay}
-                            />
-                        </div>
-                    ))
-                ) : (
-                    <div className="text-center py-12">
-                        <div className="text-gray-400 text-lg">Đang tải phim...</div>
+                {/* Movie Categories */}
+                <div className="px-6 md:px-12 pb-12">
+                    <div className="max-w-7xl mx-auto">
+                        {movieCategories.length > 0 ? (
+                            <div className="space-y-8">
+                                {movieCategories.map((category, index) => (
+                                    <div
+                                        key={category.id}
+                                        className="opacity-0 translate-y-3 animate-fade-in-up"
+                                        style={{
+                                            animationDelay: `${index * 0.1}s`,
+                                            animationFillMode: 'forwards'
+                                        }}
+                                    >
+                                        <MovieRow
+                                            title={category.name}
+                                            movies={category.movies}
+                                            onMoviePlay={handleMoviePlay}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8">
+                                <div className="space-y-6">
+                                    {[...Array(3)].map((_, i) => (
+                                        <div key={i} className="animate-pulse">
+                                            <div className="h-5 bg-gray-800 rounded w-40 mx-auto mb-4"></div>
+                                            <div className="flex gap-3 justify-center overflow-hidden">
+                                                {[...Array(6)].map((_, j) => (
+                                                    <div key={j} className="w-24 h-36 bg-gray-800 rounded-lg flex-shrink-0"></div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );

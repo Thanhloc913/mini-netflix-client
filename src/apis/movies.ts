@@ -75,7 +75,7 @@ export const moviesApi = {
             releaseDate: "2024-01-01",
             duration: 24,
             isSeries: true,
-            posterUrl: "https://gachiakuta-anime.com/assets/img/top/main/kv.jpg",
+            posterUrl: "https://ninoyo.com/_next/image?url=%2Fimg%2Fslide%2F106%2Fpc-1.jpg&w=440&q=75%20440w",
             trailerUrl: null,
             videoAssets: [],
             rating: "8.7",
