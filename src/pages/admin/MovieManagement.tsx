@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useMovies } from "@/hooks/queries/useMovieQueries";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
 import { moviesApi } from "@/apis/movies";
+import StatCard from "@/components/admin/StatCard";
 import { Plus, Film, Eye, Edit, Trash2, Upload, Play, Clock, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function MovieManagement() {
@@ -13,9 +14,9 @@ export default function MovieManagement() {
   const queryClient = useQueryClient();
 
   // Use React Query with caching
-  const { 
-    data: moviesResponse, 
-    isLoading: loading, 
+  const {
+    data: moviesResponse,
+    isLoading: loading,
     error,
     refetch
   } = useMovies(currentPage, moviesPerPage);
@@ -23,6 +24,33 @@ export default function MovieManagement() {
   const movies = moviesResponse?.movies || [];
   const totalMovies = moviesResponse?.total || 0;
   const totalPages = Math.ceil(totalMovies / moviesPerPage);
+
+  const statsData = useMemo(() => [
+    {
+      title: "Tổng phim",
+      value: totalMovies,
+      icon: Film,
+      color: "bg-blue-600"
+    },
+    {
+      title: "Phim bộ",
+      value: movies.filter(m => m.isSeries).length,
+      icon: Play,
+      color: "bg-green-600"
+    },
+    {
+      title: "Phim lẻ",
+      value: movies.filter(m => !m.isSeries).length,
+      icon: Film,
+      color: "bg-purple-600"
+    },
+    {
+      title: "Trang",
+      value: `${currentPage}/${totalPages}`,
+      icon: Upload,
+      color: "bg-orange-600"
+    }
+  ], [totalMovies, movies, currentPage, totalPages]);
 
   // Prefetch next page for better UX
   useEffect(() => {
@@ -37,7 +65,7 @@ export default function MovieManagement() {
 
   const handleDeleteMovie = async (_movieId: string) => {
     if (!confirm("Bạn có chắc chắn muốn xóa phim này?")) return;
-    
+
     try {
       // TODO: Implement delete API
       alert("Chức năng xóa phim đang phát triển");
@@ -76,20 +104,22 @@ export default function MovieManagement() {
             <h1 className="text-xl lg:text-3xl font-bold text-white mb-1 lg:mb-2">Quản lý phim</h1>
             <p className="text-gray-400 text-sm lg:text-base">Quản lý tất cả phim trong hệ thống</p>
           </div>
-          <Link to="/admin/movies/upload" className="flex-shrink-0">
-            <Button className="bg-red-600 hover:bg-red-700 text-white px-4 lg:px-6 py-2 rounded-lg flex items-center gap-2 w-full sm:w-auto justify-center">
-              <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Upload phim mới</span>
-              <span className="sm:hidden">Upload</span>
-            </Button>
-          </Link>
+          <div className="flex gap-2 flex-shrink-0">
+            <Link to="/admin/movies/upload">
+              <Button className="bg-red-600 hover:bg-red-700 text-white px-4 lg:px-6 py-2 rounded-lg flex items-center gap-2 w-full sm:w-auto justify-center">
+                <Plus className="w-4 h-4" />
+                <span className="hidden sm:inline">Upload phim mới</span>
+                <span className="sm:hidden">Upload</span>
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {error && (
           <div className="mb-4 lg:mb-6 bg-red-900/20 border border-red-600/30 text-red-400 p-3 lg:p-4 rounded-lg">
             <p className="font-medium text-sm lg:text-base">Lỗi tải dữ liệu</p>
             <p className="text-xs lg:text-sm mt-1">{error instanceof Error ? error.message : "Có lỗi xảy ra"}</p>
-            <button 
+            <button
               onClick={handleRefresh}
               className="mt-2 px-3 py-1 text-xs lg:text-sm border border-red-600/50 text-red-400 hover:bg-red-600/10 rounded"
             >
@@ -100,49 +130,15 @@ export default function MovieManagement() {
 
         {/* Fixed Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-4 lg:mb-6">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-3 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0">
-                <p className="text-gray-400 text-xs lg:text-sm">Tổng phim</p>
-                <p className="text-lg lg:text-2xl font-bold text-white">{totalMovies}</p>
-              </div>
-              <Film className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 flex-shrink-0" />
-            </div>
-          </div>
-
-          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-3 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0">
-                <p className="text-gray-400 text-xs lg:text-sm">Phim bộ</p>
-                <p className="text-lg lg:text-2xl font-bold text-white">
-                  {movies.filter(m => m.isSeries).length}
-                </p>
-              </div>
-              <Play className="w-6 h-6 lg:w-8 lg:h-8 text-green-500 flex-shrink-0" />
-            </div>
-          </div>
-
-          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-3 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0">
-                <p className="text-gray-400 text-xs lg:text-sm">Phim lẻ</p>
-                <p className="text-lg lg:text-2xl font-bold text-white">
-                  {movies.filter(m => !m.isSeries).length}
-                </p>
-              </div>
-              <Film className="w-6 h-6 lg:w-8 lg:h-8 text-purple-500 flex-shrink-0" />
-            </div>
-          </div>
-
-          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-3 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0">
-                <p className="text-gray-400 text-xs lg:text-sm">Trang</p>
-                <p className="text-lg lg:text-2xl font-bold text-white">{currentPage}/{totalPages}</p>
-              </div>
-              <Upload className="w-6 h-6 lg:w-8 lg:h-8 text-orange-500 flex-shrink-0" />
-            </div>
-          </div>
+          {statsData.map((stat) => (
+            <StatCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+            />
+          ))}
         </div>
       </div>
 
@@ -158,7 +154,7 @@ export default function MovieManagement() {
                   <span className="sm:hidden">Phim ({currentPage}/{totalPages})</span>
                 </span>
               </h2>
-              
+
               {/* Pagination Controls */}
               <div className="flex items-center gap-1 lg:gap-2 flex-shrink-0">
                 <Button
@@ -185,8 +181,8 @@ export default function MovieManagement() {
               </div>
             </div>
           </div>
-          
-          <div className="flex-1 overflow-y-auto p-3 lg:p-6">
+
+          <div className="overflow-y-auto p-3 lg:p-6">
             {loading ? (
               <div className="flex items-center justify-center py-8 lg:py-12">
                 <div className="animate-spin rounded-full h-6 w-6 lg:h-8 lg:w-8 border-b-2 border-red-500 mr-2 lg:mr-3"></div>
@@ -224,7 +220,7 @@ export default function MovieManagement() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-white mb-1 line-clamp-1">
                         {movie.title}
@@ -243,11 +239,10 @@ export default function MovieManagement() {
                             {movie.duration}p
                           </span>
                         )}
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          movie.isSeries 
-                            ? 'bg-green-600/20 text-green-400' 
+                        <span className={`px-2 py-1 rounded-full text-xs ${movie.isSeries
+                            ? 'bg-green-600/20 text-green-400'
                             : 'bg-blue-600/20 text-blue-400'
-                        }`}>
+                          }`}>
                           {movie.isSeries ? 'Bộ' : 'Lẻ'}
                         </span>
                         <span className="flex items-center gap-1 text-yellow-400">
@@ -263,7 +258,7 @@ export default function MovieManagement() {
                       <button className="p-1.5 lg:p-2 border border-gray-600 text-gray-400 hover:bg-gray-600 rounded">
                         <Edit className="w-3 h-3 lg:w-4 lg:h-4" />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDeleteMovie(movie.id)}
                         className="p-1.5 lg:p-2 border border-red-600/50 text-red-400 hover:bg-red-600/10 rounded"
                       >
@@ -275,7 +270,7 @@ export default function MovieManagement() {
               </div>
             )}
           </div>
-          
+
           {/* Bottom Pagination */}
           {totalPages > 1 && (
             <div className="flex-shrink-0 p-3 lg:p-4 border-t border-gray-700">
@@ -326,7 +321,7 @@ export default function MovieManagement() {
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
-                
+
                 {/* Page numbers */}
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
@@ -337,8 +332,8 @@ export default function MovieManagement() {
                       size="sm"
                       onClick={() => handlePageChange(pageNum)}
                       disabled={loading}
-                      className={currentPage === pageNum 
-                        ? "bg-red-600 hover:bg-red-700 text-white" 
+                      className={currentPage === pageNum
+                        ? "bg-red-600 hover:bg-red-700 text-white"
                         : "border-gray-600 text-gray-300 hover:bg-gray-700"
                       }
                     >
@@ -346,7 +341,7 @@ export default function MovieManagement() {
                     </Button>
                   );
                 })}
-                
+
                 <Button
                   variant="outline"
                   size="sm"

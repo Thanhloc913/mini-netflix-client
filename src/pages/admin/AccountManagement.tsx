@@ -6,6 +6,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import StatCard from "@/components/admin/StatCard";
 import type { Account } from "@/types/auth";
 import {
   Search,
@@ -34,6 +35,33 @@ export default function AccountManagement() {
       return matchesSearch && matchesRole;
     });
   }, [accounts, searchQuery, roleFilter]);
+
+  const statsData = useMemo(() => [
+    {
+      title: "Tổng tài khoản",
+      value: accounts.length,
+      icon: User,
+      color: "bg-blue-600"
+    },
+    {
+      title: "Người dùng",
+      value: accounts.filter(acc => acc.role === 'USER').length,
+      icon: User,
+      color: "bg-green-600"
+    },
+    {
+      title: "Quản trị viên",
+      value: accounts.filter(acc => acc.role === 'ADMIN').length,
+      icon: Shield,
+      color: "bg-purple-600"
+    },
+    {
+      title: "Kết quả tìm kiếm",
+      value: filteredAccounts.length,
+      icon: Search,
+      color: "bg-orange-600"
+    }
+  ], [accounts, filteredAccounts.length]);
 
   const handleDeleteAccount = async () => {
     if (!deleteConfirm.account) return;
@@ -70,46 +98,15 @@ export default function AccountManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Tổng tài khoản</p>
-              <p className="text-2xl font-bold text-white">{accounts.length}</p>
-            </div>
-            <User className="w-8 h-8 text-gray-400" />
-          </div>
-        </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Người dùng</p>
-              <p className="text-2xl font-bold text-white">
-                {accounts.filter(acc => acc.role === 'USER').length}
-              </p>
-            </div>
-            <User className="w-8 h-8 text-green-500" />
-          </div>
-        </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Quản trị viên</p>
-              <p className="text-2xl font-bold text-white">
-                {accounts.filter(acc => acc.role === 'ADMIN').length}
-              </p>
-            </div>
-            <Shield className="w-8 h-8 text-purple-500" />
-          </div>
-        </div>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Kết quả tìm kiếm</p>
-              <p className="text-2xl font-bold text-white">{filteredAccounts.length}</p>
-            </div>
-            <Search className="w-8 h-8 text-orange-500" />
-          </div>
-        </div>
+        {statsData.map((stat) => (
+          <StatCard
+            key={stat.title}
+            title={stat.title}
+            value={stat.value}
+            icon={stat.icon}
+            color={stat.color}
+          />
+        ))}
       </div>
 
       {/* Filters */}
