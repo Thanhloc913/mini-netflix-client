@@ -2,6 +2,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Movie } from "@/types/movie";
 import { Play, Calendar, Clock, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface MovieCardProps {
   movie: Movie;
@@ -9,6 +12,11 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie, onPlay }: MovieCardProps) {
+  const navigate = useNavigate();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionRect, setTransitionRect] = useState<DOMRect | null>(null);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).getFullYear();
   };
@@ -20,8 +28,39 @@ export function MovieCard({ movie, onPlay }: MovieCardProps) {
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (isTransitioning) return; // Prevent spam clicks
+    
+    setIsTransitioning(true);
+    
+    // Lưu toạ độ để render qua portal
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      setTransitionRect(rect);
+    }
+    
+    // Navigate after animation
+    setTimeout(() => {
+      navigate(`/movie/${movie.id}`);
+    }, 800);
+  };
+
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onPlay?.(movie);
+  };
+
   return (
-    <Card className="group relative overflow-hidden bg-gray-900 border-gray-800 hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl">
+    <>
+      <Card 
+        ref={cardRef}
+        onClick={handleCardClick}
+        className={`group relative overflow-hidden bg-gray-900 border-gray-800 hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl ${
+          isTransitioning ? 'invisible' : ''
+        }`}
+      >
       <div className="aspect-[2/3] relative">
         {/* Poster Image */}
         <img
@@ -91,7 +130,7 @@ export function MovieCard({ movie, onPlay }: MovieCardProps) {
           <Button
             size="sm"
             className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold flex items-center gap-2 transition-colors"
-            onClick={() => onPlay?.(movie)}
+            onClick={handlePlayClick}
           >
             <Play className="h-4 w-4 fill-current" />
             Xem ngay
@@ -113,6 +152,41 @@ export function MovieCard({ movie, onPlay }: MovieCardProps) {
           </div>
         </div>
       </div>
-    </Card>
+      </Card>
+      
+      {/* Transition overlay + clone qua portal để luôn phủ toàn trang */}
+      {isTransitioning && transitionRect &&
+        createPortal(
+          <div className="fixed inset-0 z-[2147483000] pointer-events-none">
+            <div className="absolute inset-0 bg-black/80 animate-fade-in" />
+            <div
+              className="movie-card-expanding overflow-hidden rounded-lg shadow-2xl"
+              style={{
+                top: `${transitionRect.top}px`,
+                left: `${transitionRect.left}px`,
+                width: `${transitionRect.width}px`,
+                height: `${transitionRect.height}px`,
+              }}
+            >
+              <div className="w-full h-full relative">
+                <img
+                  src={movie.posterUrl || "https://via.placeholder.com/300x450?text=No+Image"}
+                  alt={movie.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20" />
+                <div className="absolute top-2 left-2 text-white text-xs px-2 py-1 rounded-full font-semibold bg-blue-600">
+                  {movie.isSeries ? "Phim bộ" : "Phim lẻ"}
+                </div>
+                <div className="absolute top-2 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full font-semibold flex items-center gap-1">
+                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                  {movie.rating}
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+    </>
   );
 }

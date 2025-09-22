@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import type { Movie } from "@/types/movie";
-import { Play, Plus, Calendar, Clock, Star } from "lucide-react";
+import { Play, Plus } from "lucide-react";
 
 interface HeroSectionProps {
   movies: Movie[];
@@ -14,7 +14,7 @@ export function HeroSection({ movies, onPlay }: HeroSectionProps) {
 
   useEffect(() => {
     if (movies.length === 0) return;
-    
+
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % movies.length);
     }, 6000);
@@ -24,123 +24,112 @@ export function HeroSection({ movies, onPlay }: HeroSectionProps) {
 
   if (!currentMovie) return null;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).getFullYear();
-  };
-
-  const formatDuration = (minutes: number | null) => {
-    if (!minutes) return null;
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-  };
-
   return (
-    <div className="relative h-[80vh] overflow-hidden">
+    <div className="relative h-[100vh] overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: `url(${currentMovie.posterUrl || "https://via.placeholder.com/1920x1080?text=No+Image"})` 
+        style={{
+          backgroundImage: `url(${currentMovie.posterUrl ||
+            "https://via.placeholder.com/1920x1080?text=No+Image"
+            })`,
         }}
       />
-      
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-black/40" />
-      
+
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
+
       {/* Content */}
-      <div className="relative z-10 flex items-center h-full px-8 md:px-16">
-        <div className="max-w-4xl">
-          {/* Type and Genre tags */}
-          <div className="flex gap-2 mb-4">
-            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-              currentMovie.isSeries ? "bg-blue-600 text-white" : "bg-purple-600 text-white"
-            }`}>
-              {currentMovie.isSeries ? "Phim bộ" : "Phim lẻ"}
-            </span>
-            {currentMovie.genres && currentMovie.genres.slice(0, 2).map((genre: any, index: number) => (
-              <span
-                key={index}
-                className="bg-gray-700/80 text-white px-3 py-1 rounded-full text-sm font-medium"
-              >
-                {genre.name || genre}
-              </span>
-            ))}
-          </div>
-          
-          <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            {currentMovie.title}
-          </h1>
-          
-          {/* Movie info */}
-          <div className="flex items-center gap-6 mb-6 text-lg">
-            <div className="flex items-center gap-2 text-yellow-400">
-              <Star className="h-5 w-5 fill-current" />
-              <span className="font-semibold">{currentMovie.rating}</span>
+      <div className="relative z-10 h-full flex items-center">
+        <div className="container mx-auto px-6 md:px-12 flex items-center justify-between h-full">
+          {/* Left Content */}
+          <div className="flex-1 max-w-2xl">
+            {/* Title */}
+            <div className="mb-6">
+              <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight drop-shadow-2xl">
+                {currentMovie.title}
+              </h1>
             </div>
-            <div className="flex items-center gap-2 text-gray-300">
-              <Calendar className="h-5 w-5" />
-              <span>{formatDate(currentMovie.releaseDate)}</span>
+
+            {/* Genres */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {currentMovie.genres &&
+                currentMovie.genres.slice(0, 4).map((genre: any, index: number) => (
+                  <span key={index} className="text-gray-300 text-sm">
+                    {genre.name || genre}
+                    {index < currentMovie.genres.length - 1 && index < 3 ? ", " : ""}
+                  </span>
+                ))}
             </div>
-            {currentMovie.duration && (
-              <div className="flex items-center gap-2 text-gray-300">
-                <Clock className="h-5 w-5" />
-                <span>{formatDuration(currentMovie.duration)}</span>
+
+            {/* Description */}
+            <p className="text-gray-200 text-base md:text-lg mb-8 line-clamp-4 leading-relaxed max-w-xl">
+              {currentMovie.description}
+            </p>
+
+            {/* Actions + Indicators */}
+            <div className="flex flex-col gap-4">
+              {/* Buttons */}
+              <div className="flex gap-4">
+                <Button
+                  size="lg"
+                  className="bg-red-700 hover:bg-red-800 text-white px-6 py-3 text-base font-semibold flex items-center gap-2 rounded-md"
+                  onClick={() => onPlay?.(currentMovie)}
+                >
+                  <Play className="h-5 w-5 fill-current" />
+                  START WATCHING S2 E1
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-gray-400 text-white hover:bg-white hover:text-black px-4 py-3 text-base font-semibold rounded-md"
+                >
+                  <Plus className="h-5 w-5" />
+                </Button>
               </div>
-            )}
+
+              {/* Slide Indicators */}
+              <div className="flex gap-2">
+                {movies.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
+                      ? "bg-red-500 w-8"
+                      : "bg-white/40 w-2 hover:bg-white/60"
+                      }`}
+                    onClick={() => setCurrentIndex(index)}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-          
-          <p className="text-gray-200 text-lg mb-8 line-clamp-3 leading-relaxed max-w-3xl">
-            {currentMovie.description}
-          </p>
-          
-          <div className="flex gap-4">
-            <Button
-              size="lg"
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg font-semibold flex items-center gap-3"
-              onClick={() => onPlay?.(currentMovie)}
-            >
-              <Play className="h-6 w-6 fill-current" />
-              Xem ngay
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-black px-6 py-3 text-lg font-semibold flex items-center gap-3"
-            >
-              <Plus className="h-6 w-6" />
-              Danh sách của tôi
-            </Button>
+
+          {/* Right Illustration */}
+          <div className="hidden lg:flex flex-1 justify-end items-center h-full">
+            <div className="w-full h-full relative">{/* optional overlay */}</div>
           </div>
         </div>
       </div>
-      
-      {/* Navigation arrows */}
+
+      {/* Navigation Arrows */}
       <button
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors z-20"
-        onClick={() => setCurrentIndex((prev) => (prev - 1 + movies.length) % movies.length)}
+        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-2 rounded-full transition-colors z-30"
+        onClick={() =>
+          setCurrentIndex((prev) => (prev - 1 + movies.length) % movies.length)
+        }
       >
-        ←
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
       <button
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors z-20"
+        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-2 rounded-full transition-colors z-30"
         onClick={() => setCurrentIndex((prev) => (prev + 1) % movies.length)}
       >
-        →
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
       </button>
-      
-      {/* Indicators */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2">
-        {movies.map((_, index) => (
-          <button
-            key={index}
-            className={`w-3 h-1 rounded-full transition-all duration-300 ${
-              index === currentIndex ? "bg-orange-500 w-8" : "bg-white/50"
-            }`}
-            onClick={() => setCurrentIndex(index)}
-          />
-        ))}
-      </div>
     </div>
   );
 }

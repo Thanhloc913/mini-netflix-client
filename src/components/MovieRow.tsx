@@ -9,11 +9,11 @@ interface MovieRowProps {
 
 export function MovieRow({ title, movies, onMoviePlay }: MovieRowProps) {
   return (
-    <div className="mb-8">
-      <h2 className="text-white text-xl font-semibold mb-4">{title}</h2>
-      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+    <div className="mb-8 relative">
+      <h2 className="text-white text-xl font-semibold mb-4 relative z-10">{title}</h2>
+      <div className="flex gap-4 overflow-x-auto overflow-y-visible pb-4 scrollbar-hide relative">
         {movies.map((movie) => (
-          <div key={movie.id} className="flex-shrink-0 w-48">
+          <div key={movie.id} className="flex-shrink-0 w-48 relative">
             <MovieCard movie={movie} onPlay={onMoviePlay} />
           </div>
         ))}
