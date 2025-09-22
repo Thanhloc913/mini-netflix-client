@@ -30,10 +30,9 @@ export function HeroSection({ movies, onPlay }: HeroSectionProps) {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url(${
-            currentMovie.posterUrl ||
+          backgroundImage: `url(${currentMovie.posterUrl ||
             "https://via.placeholder.com/1920x1080?text=No+Image"
-          })`,
+            })`,
         }}
       />
 
@@ -94,11 +93,10 @@ export function HeroSection({ movies, onPlay }: HeroSectionProps) {
                 {movies.map((_, index) => (
                   <button
                     key={index}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      index === currentIndex
-                        ? "bg-orange-500 w-8"
-                        : "bg-white/40 w-2 hover:bg-white/60"
-                    }`}
+                    className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
+                      ? "bg-red-500 w-8"
+                      : "bg-white/40 w-2 hover:bg-white/60"
+                      }`}
                     onClick={() => setCurrentIndex(index)}
                   />
                 ))}

@@ -2,6 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Movie } from "@/types/movie";
 import { Play, Calendar, Clock, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
 
 interface MovieCardProps {
   movie: Movie;
@@ -9,6 +11,10 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie, onPlay }: MovieCardProps) {
+  const navigate = useNavigate();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).getFullYear();
   };
@@ -20,8 +26,51 @@ export function MovieCard({ movie, onPlay }: MovieCardProps) {
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (isTransitioning) return; // Prevent spam clicks
+    
+    setIsTransitioning(true);
+    
+    // Get card position and set it as fixed position
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      
+      // Set fixed position to current location
+      cardRef.current.style.position = 'fixed';
+      cardRef.current.style.top = `${rect.top}px`;
+      cardRef.current.style.left = `${rect.left}px`;
+      cardRef.current.style.width = `${rect.width}px`;
+      cardRef.current.style.height = `${rect.height}px`;
+      cardRef.current.style.zIndex = '99999';
+      
+      // Add expanding animation class
+      setTimeout(() => {
+        cardRef.current?.classList.add('movie-card-expanding');
+      }, 10);
+    }
+    
+    // Navigate after animation
+    setTimeout(() => {
+      navigate(`/movie/${movie.id}`);
+    }, 800);
+  };
+
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onPlay?.(movie);
+  };
+
   return (
-    <Card className="group relative overflow-hidden bg-gray-900 border-gray-800 hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl">
+    <>
+      <Card 
+        ref={cardRef}
+        onClick={handleCardClick}
+        className={`group relative overflow-hidden bg-gray-900 border-gray-800 hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl ${
+          isTransitioning ? 'z-50' : ''
+        }`}
+      >
       <div className="aspect-[2/3] relative">
         {/* Poster Image */}
         <img
@@ -91,7 +140,7 @@ export function MovieCard({ movie, onPlay }: MovieCardProps) {
           <Button
             size="sm"
             className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold flex items-center gap-2 transition-colors"
-            onClick={() => onPlay?.(movie)}
+            onClick={handlePlayClick}
           >
             <Play className="h-4 w-4 fill-current" />
             Xem ngay
@@ -113,6 +162,12 @@ export function MovieCard({ movie, onPlay }: MovieCardProps) {
           </div>
         </div>
       </div>
-    </Card>
+      </Card>
+      
+      {/* Transition overlay */}
+      {isTransitioning && (
+        <div className="fixed inset-0 bg-black/80 z-50 animate-fade-in" />
+      )}
+    </>
   );
 }
