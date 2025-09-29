@@ -13,6 +13,7 @@ export function Watch() {
     const navigate = useNavigate();
     const [selectedAsset, setSelectedAsset] = useState<VideoAsset | null>(null);
     const [currentEpisode, setCurrentEpisode] = useState(1);
+    const [availableQualities, setAvailableQualities] = useState<VideoAsset[]>([]);
 
     // Fetch data
     const { data: movie, isLoading: movieLoading } = useMovie(movieId || '');
@@ -38,6 +39,10 @@ export function Watch() {
 
     useEffect(() => {
         console.log('🔍 Selecting video asset from API data...');
+        
+        // Combine all available video assets for quality selection
+        const allAssets = [...(hlsAssets || []), ...(videoAssets || [])];
+        setAvailableQualities(allAssets);
         
         // Select the best available video asset from API
         if (hlsAssets && hlsAssets.length > 0) {
@@ -71,6 +76,11 @@ export function Watch() {
     const handleEpisodeSelect = (episodeNumber: number) => {
         setCurrentEpisode(episodeNumber);
         // In real app, this would load different video asset for the episode
+    };
+
+    const handleQualityChange = (asset: VideoAsset) => {
+        console.log('🎯 Quality changed to:', asset.resolution);
+        setSelectedAsset(asset);
     };
 
     if (loading) {
@@ -139,7 +149,10 @@ export function Watch() {
                         src={selectedAsset.url}
                         poster={movie.posterUrl}
                         title={`${movie.title} - Tập ${currentEpisode}`}
+                        videoAssets={availableQualities}
+                        selectedAsset={selectedAsset}
                         onClose={handleBack}
+                        onQualityChange={handleQualityChange}
                     />
                 ) : (
                     <div className="flex items-center justify-center h-full">

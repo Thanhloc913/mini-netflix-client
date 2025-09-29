@@ -1,17 +1,32 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Play, X } from 'lucide-react';
+import { QualitySelector } from '@/components/QualitySelector';
+import type { VideoAsset } from '@/apis/movies';
 
 interface SimpleVideoPlayerProps {
   src: string;
   poster?: string;
   title?: string;
+  videoAssets?: VideoAsset[];
+  selectedAsset?: VideoAsset | null;
   onClose?: () => void;
+  onQualityChange?: (asset: VideoAsset) => void;
 }
 
-export function SimpleVideoPlayer({ src, poster, title, onClose }: SimpleVideoPlayerProps) {
+export function SimpleVideoPlayer({ 
+  src, 
+  poster, 
+  title, 
+  videoAssets = [], 
+  selectedAsset, 
+  onClose, 
+  onQualityChange 
+}: SimpleVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [wasPlaying, setWasPlaying] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -115,7 +130,59 @@ export function SimpleVideoPlayer({ src, poster, title, onClose }: SimpleVideoPl
     };
   }, [src]);
 
+  // Handle quality change while preserving currentTime
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
 
+    const handleTimeUpdate = () => {
+      setCurrentTime(video.currentTime);
+    };
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+      setWasPlaying(true);
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
+      setWasPlaying(false);
+    };
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+    };
+  }, []);
+
+  // Preserve currentTime and playing state when src changes (quality change)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || currentTime === 0) return;
+
+    const restorePlayback = () => {
+      video.currentTime = currentTime;
+      if (wasPlaying) {
+        video.play().catch(console.error);
+      }
+    };
+
+    // Wait for video to be ready
+    if (video.readyState >= 2) {
+      restorePlayback();
+    } else {
+      video.addEventListener('loadeddata', restorePlayback, { once: true });
+    }
+
+    return () => {
+      video.removeEventListener('loadeddata', restorePlayback);
+    };
+  }, [src, currentTime, wasPlaying]);
 
   const togglePlay = () => {
     const video = videoRef.current;
@@ -145,6 +212,19 @@ export function SimpleVideoPlayer({ src, poster, title, onClose }: SimpleVideoPl
     setError(null);
   };
 
+  const handleQualityChange = (asset: VideoAsset) => {
+    const video = videoRef.current;
+    if (video && onQualityChange) {
+      // Save current playback state
+      setCurrentTime(video.currentTime);
+      setWasPlaying(!video.paused);
+      console.log('🎯 Changing quality to:', asset.resolution, 'at time:', video.currentTime);
+      
+      // Call parent's quality change handler
+      onQualityChange(asset);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
       {/* Close button */}
@@ -161,6 +241,8 @@ export function SimpleVideoPlayer({ src, poster, title, onClose }: SimpleVideoPl
           {title}
         </div>
       )}
+
+
 
       {/* Video container */}
       <div className="relative w-full h-full flex items-center justify-center">
@@ -210,6 +292,17 @@ export function SimpleVideoPlayer({ src, poster, title, onClose }: SimpleVideoPl
               <Play size={48} className="text-white fill-current" />
             </div>
           </button>
+        )}
+
+        {/* Quality Selector */}
+        {videoAssets.length > 0 && onQualityChange && (
+          <div className="absolute bottom-16 right-4 z-10">
+            <QualitySelector
+              videoAssets={videoAssets}
+              selectedAsset={selectedAsset || null}
+              onQualityChange={handleQualityChange}
+            />
+          </div>
         )}
 
         {/* Debug info
