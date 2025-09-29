@@ -13,7 +13,7 @@ export const castsApi = {
   getAllCasts: async (): Promise<Cast[]> => {
     try {
       console.log("👥 Fetching casts from API...");
-      const response = await apiClient.get("movie/casts");
+      const response = await apiClient.get("/casts");
       console.log("✅ Casts fetched:", response.data);
       
       if (Array.isArray(response.data)) {
@@ -36,7 +36,7 @@ export const castsApi = {
   getCastById: async (id: string): Promise<Cast | null> => {
     try {
       console.log("👥 Fetching cast by ID:", id);
-      const response = await apiClient.get<Cast>(`/movie/casts/${id}`);
+      const response = await apiClient.get<Cast>(`/casts/${id}`);
       return response.data;
     } catch (error: any) {
       console.error("❌ Failed to fetch cast by ID:", error);
@@ -48,7 +48,7 @@ export const castsApi = {
   createCast: async (castData: CreateCastRequest): Promise<Cast> => {
     try {
       console.log("👥 Creating cast:", castData);
-      const response = await apiClient.post<Cast>("/movie/casts", castData);
+      const response = await apiClient.post<Cast>("/casts", castData);
       console.log("✅ Cast created:", response.data);
       return response.data;
     } catch (error: any) {
@@ -64,7 +64,7 @@ export const castsApi = {
   updateCast: async (id: string, castData: UpdateCastRequest): Promise<Cast> => {
     try {
       console.log("👥 Updating cast:", id, castData);
-      const response = await apiClient.patch<Cast>(`/movie/casts/${id}`, castData);
+      const response = await apiClient.patch<Cast>(`/casts/${id}`, castData);
       console.log("✅ Cast updated:", response.data);
       return response.data;
     } catch (error: any) {
@@ -80,7 +80,7 @@ export const castsApi = {
   deleteCast: async (id: string): Promise<void> => {
     try {
       console.log("🗑️ Deleting cast:", id);
-      await apiClient.delete(`/movie/casts/${id}`);
+      await apiClient.delete(`/casts/${id}`);
       console.log("✅ Cast deleted:", id);
     } catch (error: any) {
       console.error("❌ Failed to delete cast:", error);

@@ -1,22 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { filesApi } from '@/apis/files';
+import { moviesApi } from '@/apis/movies';
 import { queryKeys } from '@/lib/query-keys';
-import type { VideoAssetRequest, PresignedUrlRequest } from '@/apis/files';
+import type { VideoAssetRequest } from '@/apis/movies';
 
 // Get presigned URL mutation
 export function useGetPresignedUrl() {
   return useMutation({
-    mutationFn: (request: PresignedUrlRequest) => filesApi.getPresignedUrl(request),
+    mutationFn: () => filesApi.getPresignedUrl(),
   });
 }
 
 // Upload to blob mutation
 export function useUploadToBlob() {
   return useMutation({
-    mutationFn: ({ uploadUrl, file, onProgress }: { 
-      uploadUrl: string; 
-      file: File; 
-      onProgress?: (progress: number) => void 
+    mutationFn: ({ uploadUrl, file, onProgress }: {
+      uploadUrl: string;
+      file: File;
+      onProgress?: (progress: number) => void
     }) => filesApi.uploadToBlob(uploadUrl, file, onProgress),
   });
 }
@@ -26,11 +27,11 @@ export function useCreateVideoAsset() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: VideoAssetRequest) => filesApi.createVideoAsset(request),
+    mutationFn: (request: VideoAssetRequest) => moviesApi.createVideoAsset(request),
     onSuccess: (videoAsset) => {
       // Invalidate video assets for this movie
-      queryClient.invalidateQueries({ 
-        queryKey: queryKeys.files.videoAssets(videoAsset.movieId) 
+      queryClient.invalidateQueries({
+        queryKey: ['video-assets', videoAsset.movieId]
       });
     },
   });

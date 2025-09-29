@@ -13,7 +13,7 @@ export const genresApi = {
   getAllGenres: async (): Promise<Genre[]> => {
     try {
       console.log("🎭 Fetching genres from API...");
-      const response = await apiClient.get("/movie/genres");
+      const response = await apiClient.get("/genres");
       console.log("✅ Genres fetched:", response.data);
       
       if (Array.isArray(response.data)) {
@@ -36,7 +36,7 @@ export const genresApi = {
   getGenreById: async (id: string): Promise<Genre | null> => {
     try {
       console.log("🎭 Fetching genre by ID:", id);
-      const response = await apiClient.get<Genre>(`/movie/genres/${id}`);
+      const response = await apiClient.get<Genre>(`/genres/${id}`);
       return response.data;
     } catch (error: any) {
       console.error("❌ Failed to fetch genre by ID:", error);
@@ -48,7 +48,7 @@ export const genresApi = {
   createGenre: async (genreData: CreateGenreRequest): Promise<Genre> => {
     try {
       console.log("🎭 Creating genre:", genreData);
-      const response = await apiClient.post<Genre>("/movie/genres", genreData);
+      const response = await apiClient.post<Genre>("/genres", genreData);
       console.log("✅ Genre created:", response.data);
       return response.data;
     } catch (error: any) {
@@ -64,7 +64,7 @@ export const genresApi = {
   updateGenre: async (id: string, genreData: UpdateGenreRequest): Promise<Genre> => {
     try {
       console.log("🎭 Updating genre:", id, genreData);
-      const response = await apiClient.patch<Genre>(`/movie/genres/${id}`, genreData);
+      const response = await apiClient.patch<Genre>(`/genres/${id}`, genreData);
       console.log("✅ Genre updated:", response.data);
       return response.data;
     } catch (error: any) {
@@ -80,7 +80,7 @@ export const genresApi = {
   deleteGenre: async (id: string): Promise<void> => {
     try {
       console.log("🗑️ Deleting genre:", id);
-      await apiClient.delete(`/movie/genres/${id}`);
+      await apiClient.delete(`/genres/${id}`);
       console.log("✅ Genre deleted:", id);
     } catch (error: any) {
       console.error("❌ Failed to delete genre:", error);

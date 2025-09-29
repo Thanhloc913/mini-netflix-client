@@ -8,6 +8,31 @@ export class MovieError extends Error {
   }
 }
 
+export class FileError extends Error {
+  constructor(message: string, public status?: number) {
+    super(message);
+    this.name = "FileError";
+  }
+}
+
+export interface VideoAssetRequest {
+  movieId: string;
+  resolution: string;
+  format: string;
+  url: string;
+  status: string;
+}
+
+export interface VideoAsset {
+  id: string;
+  movieId: string;
+  resolution: string;
+  format: string;
+  url: string;
+  status: string;
+  createdAt: string;
+}
+
 export const moviesApi = {
   // Get all movies - chỉ dùng API /movie/movies
   getAllMovies: async (page = 1, limit = 20): Promise<MoviesResponse> => {
@@ -399,6 +424,38 @@ export const moviesApi = {
       console.error("❌ Failed to delete movie:", error);
       throw new MovieError(
         error.response?.data?.message || "Failed to delete movie",
+        error.response?.status
+      );
+    }
+  },
+
+  // Create video asset
+  createVideoAsset: async (videoAssetData: VideoAssetRequest): Promise<VideoAsset> => {
+    try {
+      console.log("🎬 Creating video asset...");
+      const response = await apiClient.post<VideoAsset>("/movie/video-assets", videoAssetData);
+      console.log("✅ Video asset created:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Failed to create video asset:", error);
+      throw new FileError(
+        error.response?.data?.message || "Failed to create video asset",
+        error.response?.status
+      );
+    }
+  },
+
+  // Get video assets for a movie
+  getVideoAssets: async (movieId: string): Promise<VideoAsset[]> => {
+    try {
+      console.log("🎬 Getting video assets for movie:", movieId);
+      const response = await apiClient.get<VideoAsset[]>(`/movie/video-assets/movie/${movieId}`);
+      console.log("✅ Video assets fetched:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Failed to get video assets:", error);
+      throw new FileError(
+        error.response?.data?.message || "Failed to get video assets",
         error.response?.status
       );
     }
