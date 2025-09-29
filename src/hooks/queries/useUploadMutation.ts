@@ -27,11 +27,7 @@ export function useUploadMovie() {
 
         // Bước 2: Lấy Presigned URL
         onProgress?.('presign', 30, 'Lấy link upload...');
-        const { uploadUrl, blobUrl } = await getPresignedUrlMutation.mutateAsync({
-          fileName: videoFile.name,
-          fileType: videoFile.type,
-          fileSize: videoFile.size
-        });
+        const { uploadUrl, blobUrl } = await getPresignedUrlMutation.mutateAsync();
         console.log("📋 Presigned URLs received:");
         console.log("  - Upload URL (for PUT request):", uploadUrl);
         console.log("  - File URL (for database):", blobUrl);

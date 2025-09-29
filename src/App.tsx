@@ -3,6 +3,7 @@ import Home from "@/pages/public/Home";
 import MainLayout from "@/layout/MainLayout";
 import Movie from "@/pages/public/Movie";
 import MovieDetail from "@/pages/public/MovieDetail";
+import { Watch } from "@/pages/public/Watch";
 import LoginPage from "@/pages/public/Login";
 import RegisterPage from "./pages/public/Register";
 import ProfilePage from "./pages/private/Profile";
@@ -74,6 +75,10 @@ export default function AppRouter() {
                   <MovieDetail />
                 </MainLayout>
               }
+            />
+            <Route
+              path="/watch/:movieId"
+              element={<Watch />}
             />
             <Route
               path="/profile"

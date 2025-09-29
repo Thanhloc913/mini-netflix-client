@@ -15,7 +15,7 @@ export default function Navbar() {
 
   const handleMoviePlay = (movie: Movie) => {
     console.log("Playing movie:", movie.title);
-    alert(`Đang phát: ${movie.title}`);
+    window.location.href = `/watch/${movie.id}`;
   };
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-neutral-900 shadow-[0_2px_10px_rgba(0,0,0,.4)]">

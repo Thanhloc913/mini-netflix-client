@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import type { Movie } from "@/types/movie";
 import { Play, Plus } from "lucide-react";
@@ -8,9 +9,16 @@ interface HeroSectionProps {
   onPlay?: (movie: Movie) => void;
 }
 
-export function HeroSection({ movies, onPlay }: HeroSectionProps) {
+export function HeroSection({ movies }: HeroSectionProps) {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentMovie = movies[currentIndex];
+
+  const handleWatchNow = () => {
+    if (currentMovie?.id) {
+      navigate(`/watch/${currentMovie.id}`);
+    }
+  };
 
   useEffect(() => {
     if (movies.length === 0) return;
@@ -74,10 +82,10 @@ export function HeroSection({ movies, onPlay }: HeroSectionProps) {
                 <Button
                   size="lg"
                   className="bg-red-700 hover:bg-red-800 text-white px-6 py-3 text-base font-semibold flex items-center gap-2 rounded-md"
-                  onClick={() => onPlay?.(currentMovie)}
+                  onClick={handleWatchNow}
                 >
                   <Play className="h-5 w-5 fill-current" />
-                  START WATCHING S2 E1
+                  Xem ngay
                 </Button>
                 <Button
                   size="lg"
