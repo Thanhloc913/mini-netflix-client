@@ -148,44 +148,41 @@ export function SimpleVideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
+    let lastUpdate = 0;
     const handleTimeUpdate = () => {
-      setCurrentTime(video.currentTime);
-    };
-
-    const handlePlay = () => {
-      setIsPlaying(true);
-      setWasPlaying(true);
-    };
-
-    const handlePause = () => {
-      setIsPlaying(false);
-      setWasPlaying(false);
+      // Throttle updates to every 500ms to reduce re-renders
+      const now = Date.now();
+      if (now - lastUpdate > 500) {
+        setCurrentTime(video.currentTime);
+        lastUpdate = now;
+      }
     };
 
     video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('play', handlePlay);
-    video.addEventListener('pause', handlePause);
 
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('play', handlePlay);
-      video.removeEventListener('pause', handlePause);
     };
   }, []);
 
   // Preserve currentTime and playing state when src changes (quality change)
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || currentTime === 0) return;
+    if (!video || currentTime <= 0) return;
 
+    let restored = false;
+    
     const restorePlayback = () => {
+      if (restored) return; // Prevent multiple calls
+      restored = true;
+      
       console.log('🔄 Restoring playback to time:', currentTime);
       
-      // Small delay to ensure video is ready for HLS streams
       setTimeout(() => {
-        if (video.duration && currentTime <= video.duration) {
+        if (video.duration && currentTime <= video.duration && currentTime > 0) {
           video.currentTime = currentTime;
-          if (wasPlaying) {
+          
+          if (wasPlaying && video.paused) {
             video.play().then(() => {
               console.log('✅ Playback resumed successfully');
             }).catch((err) => {
@@ -193,26 +190,25 @@ export function SimpleVideoPlayer({
             });
           }
         }
-      }, 100);
+      }, 200); // Increased delay for HLS
     };
 
-    // Wait for video to be ready
-    if (video.readyState >= 2) {
+    // Single event listener approach
+    const handleCanPlay = () => {
+      restorePlayback();
+      video.removeEventListener('canplay', handleCanPlay);
+    };
+
+    if (video.readyState >= 3) { // HAVE_FUTURE_DATA
       restorePlayback();
     } else {
-      const events = ['loadedmetadata', 'canplay', 'loadeddata'];
-      const handleReady = () => {
-        restorePlayback();
-        events.forEach(event => {
-          video.removeEventListener(event, handleReady);
-        });
-      };
-      
-      events.forEach(event => {
-        video.addEventListener(event, handleReady, { once: true });
-      });
+      video.addEventListener('canplay', handleCanPlay);
     }
-  }, [src, currentTime, wasPlaying]);
+
+    return () => {
+      video.removeEventListener('canplay', handleCanPlay);
+    };
+  }, [src]); // Only depend on src, not currentTime/wasPlaying to avoid loops
 
   const togglePlay = () => {
     const video = videoRef.current;
@@ -245,10 +241,12 @@ export function SimpleVideoPlayer({
   const handleQualityChange = (asset: VideoAsset) => {
     const video = videoRef.current;
     if (video && onQualityChange) {
-      // Save current playback state
-      setCurrentTime(video.currentTime);
-      setWasPlaying(!video.paused);
-      console.log('🎯 Changing quality to:', asset.resolution, 'at time:', video.currentTime);
+      // Save current playback state only if video is playing/loaded
+      if (video.readyState >= 1 && video.currentTime > 0) {
+        setCurrentTime(video.currentTime);
+        setWasPlaying(!video.paused && !video.seeking);
+        console.log('🎯 Changing quality to:', asset.resolution, 'at time:', video.currentTime, 'wasPlaying:', !video.paused);
+      }
       
       // Call parent's quality change handler
       onQualityChange(asset);
@@ -284,8 +282,14 @@ export function SimpleVideoPlayer({
           controls
           onError={handleError}
           onLoadedData={handleLoadedData}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
+          onPlay={() => {
+            setIsPlaying(true);
+            setWasPlaying(true);
+          }}
+          onPause={() => {
+            setIsPlaying(false);
+            setWasPlaying(false);
+          }}
         >
           <source src={src} type="video/mp4" />
           <source src={src} type="application/vnd.apple.mpegurl" />
