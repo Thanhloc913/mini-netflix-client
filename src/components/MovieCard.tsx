@@ -49,7 +49,7 @@ export function MovieCard({ movie, onPlay }: MovieCardProps) {
 
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onPlay?.(movie);
+    navigate(`/watch/${movie.id}`);
   };
 
   return (

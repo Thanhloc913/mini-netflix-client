@@ -34,7 +34,7 @@ export interface VideoAsset {
 }
 
 export const moviesApi = {
-  // Get all movies - chỉ dùng API /movie/movies
+  // Get all movies - via gateway to movie service
   getAllMovies: async (page = 1, limit = 20): Promise<MoviesResponse> => {
     try {
       console.log("🎬 Fetching movies from API...");
@@ -456,6 +456,42 @@ export const moviesApi = {
       console.error("❌ Failed to get video assets:", error);
       throw new FileError(
         error.response?.data?.message || "Failed to get video assets",
+        error.response?.status
+      );
+    }
+  },
+
+  // Get HLS assets for streaming
+  getHLSAssets: async (movieId: string): Promise<VideoAsset[]> => {
+    try {
+      console.log("🎬 Getting HLS assets for movie:", movieId);
+      console.log("🎬 API URL:", `${apiClient.defaults.baseURL}/movie/video-assets/movie/${movieId}/hls`);
+      const response = await apiClient.get<VideoAsset[]>(`/movie/video-assets/movie/${movieId}/hls`);
+      console.log("✅ HLS assets fetched:", response.data);
+      console.log("✅ Raw response:", response);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Failed to get HLS assets:", error);
+      console.error("❌ Error status:", error.response?.status);
+      console.error("❌ Error data:", error.response?.data);
+      throw new FileError(
+        error.response?.data?.message || "Failed to get HLS assets",
+        error.response?.status
+      );
+    }
+  },
+
+  // Get seek-optimized HLS assets
+  getSeekOptimizedHLS: async (movieId: string): Promise<VideoAsset[]> => {
+    try {
+      console.log("🎬 Getting seek-optimized HLS assets for movie:", movieId);
+      const response = await apiClient.get<VideoAsset[]>(`/movie/video-assets/movie/${movieId}/hls/seek-optimized`);
+      console.log("✅ Seek-optimized HLS assets fetched:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Failed to get seek-optimized HLS assets:", error);
+      throw new FileError(
+        error.response?.data?.message || "Failed to get seek-optimized HLS assets",
         error.response?.status
       );
     }

@@ -13,7 +13,7 @@ export interface PresignedUrlResponse {
 }
 
 export const filesApi = {
-  // Get presigned URL for movie upload
+  // Get presigned URL for movie upload via gateway to file service
   getPresignedUrl: async (): Promise<PresignedUrlResponse> => {
     try {
       console.log("📁 Getting presigned URL for movie upload...");

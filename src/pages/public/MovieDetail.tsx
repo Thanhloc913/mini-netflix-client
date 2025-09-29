@@ -11,6 +11,12 @@ export default function MovieDetail() {
   
   const { data: movie, isLoading, error } = useMovie(id || "");
 
+  const handleWatchNow = () => {
+    if (id) {
+      navigate(`/watch/${id}`);
+    }
+  };
+
   useEffect(() => {
     // Simple entrance animation
     const timer = setTimeout(() => {
@@ -124,6 +130,7 @@ export default function MovieDetail() {
                 <Button
                   size="lg"
                   className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 text-lg font-semibold flex items-center gap-3"
+                  onClick={handleWatchNow}
                 >
                   <Play className="h-6 w-6 fill-current" />
                   Xem ngay

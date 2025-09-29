@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useMovies } from "@/hooks/useMovies";
 import { HeroSection } from "@/components/HeroSection";
 import { MovieRow } from "@/components/MovieRow";
@@ -5,11 +6,11 @@ import type { Movie } from "@/types/movie";
 
 export default function Home() {
     const { featuredMovies, movieCategories, isLoading, error, refetch } = useMovies();
+    const navigate = useNavigate();
 
     const handleMoviePlay = (movie: Movie) => {
-        // TODO: Implement movie player or navigation
         console.log("Playing movie:", movie.title);
-        alert(`Đang phát: ${movie.title}`);
+        navigate(`/watch/${movie.id}`);
     };
 
     if (isLoading) {
