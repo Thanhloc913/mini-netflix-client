@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Play, Pause, X } from 'lucide-react';
+import { Play, X } from 'lucide-react';
 
 interface SimpleVideoPlayerProps {
   src: string;
@@ -212,14 +212,14 @@ export function SimpleVideoPlayer({ src, poster, title, onClose }: SimpleVideoPl
           </button>
         )}
 
-        {/* Debug info */}
+        {/* Debug info
         {import.meta.env.DEV && (
           <div className="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
             <p>URL: {src}</p>
             <p>Playing: {isPlaying ? 'Yes' : 'No'}</p>
             <p>Error: {error || 'None'}</p>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

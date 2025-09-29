@@ -11,7 +11,7 @@ interface MovieCardProps {
   onPlay?: (movie: Movie) => void;
 }
 
-export function MovieCard({ movie, onPlay }: MovieCardProps) {
+export function MovieCard({ movie }: MovieCardProps) {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);

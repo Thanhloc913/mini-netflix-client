@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { filesApi } from '@/apis/files';
 import { moviesApi } from '@/apis/movies';
-import { queryKeys } from '@/lib/query-keys';
 import type { VideoAssetRequest } from '@/apis/movies';
 
 // Get presigned URL mutation

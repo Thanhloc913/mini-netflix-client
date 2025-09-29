@@ -9,7 +9,7 @@ interface HeroSectionProps {
   onPlay?: (movie: Movie) => void;
 }
 
-export function HeroSection({ movies, onPlay }: HeroSectionProps) {
+export function HeroSection({ movies }: HeroSectionProps) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentMovie = movies[currentIndex];

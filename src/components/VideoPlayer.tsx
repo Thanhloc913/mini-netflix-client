@@ -327,19 +327,6 @@ export function VideoPlayer({ src, poster, title, onClose }: VideoPlayerProps) {
           </div>
         )}
 
-        {/* Debug info (only in development) - make it toggleable */}
-        {process.env.NODE_ENV === 'development' && showControls && (
-          <div className="absolute top-16 left-4 bg-black bg-opacity-90 text-white p-2 rounded text-xs max-w-xs">
-            <div className="font-bold mb-1">Debug Info:</div>
-            <p>URL: {src.substring(0, 50)}...</p>
-            <p>Loading: {isLoading ? 'Yes' : 'No'}</p>
-            <p>Playing: {isPlaying ? 'Yes' : 'No'}</p>
-            <p>Duration: {duration.toFixed(1)}s</p>
-            <p>Current: {currentTime.toFixed(1)}s</p>
-            <p>Error: {error || 'None'}</p>
-          </div>
-        )}
-
         {/* Large play button overlay when not playing */}
         {!isPlaying && !isLoading && !error && (
           <div className="absolute inset-0 flex items-center justify-center">
