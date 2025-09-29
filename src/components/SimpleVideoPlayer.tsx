@@ -23,6 +23,7 @@ export function SimpleVideoPlayer({
   onQualityChange 
 }: SimpleVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const hlsRef = useRef<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -31,6 +32,13 @@ export function SimpleVideoPlayer({
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !src) return;
+
+    // Cleanup previous HLS instance
+    if (hlsRef.current) {
+      console.log('🧹 Cleaning up previous HLS instance');
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
 
     console.log('🎬 Setting up video player for:', src);
     
@@ -56,6 +64,9 @@ export function SimpleVideoPlayer({
               enableWorker: false,
             });
             
+            // Store HLS instance for cleanup
+            hlsRef.current = hls;
+            
             hls.loadSource(src);
             hls.attachMedia(video);
             
@@ -72,8 +83,8 @@ export function SimpleVideoPlayer({
                     setError('Lỗi mạng khi tải video');
                     break;
                   case Hls.ErrorTypes.MEDIA_ERROR:
-                    console.error('❌ Media error');
-                    setError('Lỗi media codec');
+                    console.error('❌ Media error, trying to recover...');
+                    hls.recoverMediaError();
                     break;
                   default:
                     setError(`Lỗi HLS: ${data.details}`);
@@ -82,11 +93,6 @@ export function SimpleVideoPlayer({
               }
             });
 
-            // Cleanup function
-            return () => {
-              console.log('🧹 Cleaning up HLS.js');
-              hls.destroy();
-            };
           } else {
             console.error('❌ HLS.js not supported');
             setError('Trình duyệt không hỗ trợ HLS streaming');
@@ -127,6 +133,13 @@ export function SimpleVideoPlayer({
       video.removeEventListener('error', handleError);
       video.removeEventListener('loadstart', handleLoadStart);
       video.removeEventListener('canplay', handleCanPlay);
+      
+      // Cleanup HLS instance on unmount
+      if (hlsRef.current) {
+        console.log('🧹 Cleaning up HLS instance on unmount');
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
     };
   }, [src]);
 
@@ -166,22 +179,39 @@ export function SimpleVideoPlayer({
     if (!video || currentTime === 0) return;
 
     const restorePlayback = () => {
-      video.currentTime = currentTime;
-      if (wasPlaying) {
-        video.play().catch(console.error);
-      }
+      console.log('🔄 Restoring playback to time:', currentTime);
+      
+      // Small delay to ensure video is ready for HLS streams
+      setTimeout(() => {
+        if (video.duration && currentTime <= video.duration) {
+          video.currentTime = currentTime;
+          if (wasPlaying) {
+            video.play().then(() => {
+              console.log('✅ Playback resumed successfully');
+            }).catch((err) => {
+              console.error('❌ Failed to resume playback:', err);
+            });
+          }
+        }
+      }, 100);
     };
 
     // Wait for video to be ready
     if (video.readyState >= 2) {
       restorePlayback();
     } else {
-      video.addEventListener('loadeddata', restorePlayback, { once: true });
+      const events = ['loadedmetadata', 'canplay', 'loadeddata'];
+      const handleReady = () => {
+        restorePlayback();
+        events.forEach(event => {
+          video.removeEventListener(event, handleReady);
+        });
+      };
+      
+      events.forEach(event => {
+        video.addEventListener(event, handleReady, { once: true });
+      });
     }
-
-    return () => {
-      video.removeEventListener('loadeddata', restorePlayback);
-    };
   }, [src, currentTime, wasPlaying]);
 
   const togglePlay = () => {

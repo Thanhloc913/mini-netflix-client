@@ -12,13 +12,15 @@ interface QualitySelectorProps {
 export function QualitySelector({ videoAssets, selectedAsset, onQualityChange, className = '' }: QualitySelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Chỉ hiển thị 3 chất lượng chính và sắp xếp từ cao xuống thấp
+  // Chỉ hiển thị 3 chất lượng chính và loại bỏ duplicate
   const allowedQualities = ['1080p', '720p', '480p'];
-  const filteredAssets = videoAssets.filter(asset => 
-    allowedQualities.includes(asset.resolution)
-  );
   
-  const sortedAssets = [...filteredAssets].sort((a, b) => {
+  // Group by resolution và chỉ lấy 1 asset cho mỗi resolution
+  const uniqueAssets = allowedQualities
+    .map(quality => videoAssets.find(asset => asset.resolution === quality))
+    .filter(asset => asset !== undefined) as VideoAsset[];
+  
+  const sortedAssets = [...uniqueAssets].sort((a, b) => {
     const resA = parseInt(a.resolution.replace('p', ''));
     const resB = parseInt(b.resolution.replace('p', ''));
     return resB - resA;
